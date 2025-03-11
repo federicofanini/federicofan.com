@@ -68,6 +68,7 @@ export const DATA = {
       logoUrl: "/gymbrah.png",
       start: "2025",
       end: "Present",
+      abandoned: false,
       description: "Run your fitness business without chaos. Open Source.",
     },
     {
@@ -79,6 +80,7 @@ export const DATA = {
       logoUrl: "/fedfan.png",
       start: "2025",
       end: "Present",
+      abandoned: false,
       description: "A free link in bio for founders.",
     },
     {
@@ -90,6 +92,7 @@ export const DATA = {
       logoUrl: "/snake.png",
       start: "2022",
       end: "Present",
+      abandoned: false,
       description: "Defend your health, smarter.",
     },
     {
@@ -101,6 +104,7 @@ export const DATA = {
       logoUrl: "/blockshub.png",
       start: "2021",
       end: "Present",
+      abandoned: false,
       description: "Managing operations and business development.",
     },
     {
@@ -112,6 +116,7 @@ export const DATA = {
       logoUrl: "/bsky.png",
       start: "2024",
       end: "2025",
+      abandoned: true,
       description: "A free link in bio for founders.",
     },
     {
@@ -123,6 +128,7 @@ export const DATA = {
       logoUrl: "/subs.svg",
       start: "2024",
       end: "2025",
+      abandoned: true,
       description: "A map of all the subscriptions you have.",
     },
     {
@@ -134,6 +140,7 @@ export const DATA = {
       logoUrl: "/shipper.png",
       start: "2024",
       end: "2025",
+      abandoned: true,
       description: "NextJS Boilerplate to ship app faster.",
     },
     {
@@ -145,6 +152,7 @@ export const DATA = {
       logoUrl: "/astro.png",
       start: "2023",
       end: "2024",
+      abandoned: true,
       description: "Indie Hacker's Toolkit",
     },
   ],

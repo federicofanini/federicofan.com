@@ -22,7 +22,7 @@ export default function Page() {
                 delay={BLUR_FADE_DELAY}
                 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
                 yOffset={8}
-                text={`Hi, I'm ${DATA.name.split(" ")[0]} 👋`}
+                text={`${DATA.name.split(" ")[0]} here 👋`}
               />
               <BlurFadeText
                 className="max-w-[600px] md:text-xl font-mono"
@@ -39,6 +39,26 @@ export default function Page() {
           </div>
         </div>
       </section>
+      <section id="socials">
+        <div className="flex min-h-0 flex-col gap-y-1">
+          <BlurFade delay={BLUR_FADE_DELAY * 4.7}>
+            <div className="flex gap-2">
+              {Object.values(DATA.contact.social).map((social) => (
+                <Link
+                  key={social.name}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center size-8 rounded-md border bg-background hover:bg-accent transition-colors"
+                >
+                  <social.icon className="size-4" />
+                  <span className="sr-only">{social.name}</span>
+                </Link>
+              ))}
+            </div>
+          </BlurFade>
+        </div>
+      </section>
       <section id="about">
         <BlurFade delay={BLUR_FADE_DELAY * 3}>
           <h2 className="text-lg font-bold font-mono">About</h2>
@@ -49,6 +69,7 @@ export default function Page() {
           </Markdown>
         </BlurFade>
       </section>
+
       <section id="work">
         <div className="flex min-h-0 flex-col gap-y-3">
           <BlurFade delay={BLUR_FADE_DELAY * 5}>
@@ -69,6 +90,7 @@ export default function Page() {
                 badges={work.badges}
                 period={`${work.start} - ${work.end ?? "Present"}`}
                 description={work.description}
+                abandoned={work.abandoned}
               />
             </BlurFade>
           ))}

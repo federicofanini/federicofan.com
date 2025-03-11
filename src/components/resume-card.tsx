@@ -18,6 +18,7 @@ interface ResumeCardProps {
   badges?: readonly string[];
   period: string;
   description?: string;
+  abandoned?: boolean;
 }
 export const ResumeCard = ({
   logoUrl,
@@ -28,6 +29,7 @@ export const ResumeCard = ({
   badges,
   period,
   description,
+  abandoned,
 }: ResumeCardProps) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
@@ -81,7 +83,13 @@ export const ResumeCard = ({
                 />
               </h3>
               <div className="text-xs sm:text-sm tabular-nums text-muted-foreground text-right">
-                {period}
+                {abandoned ? (
+                  <Badge variant="secondary" className="text-xs">
+                    💀 abandoned
+                  </Badge>
+                ) : (
+                  period
+                )}
               </div>
             </div>
             {subtitle && <div className="font-sans text-xs">{subtitle}</div>}

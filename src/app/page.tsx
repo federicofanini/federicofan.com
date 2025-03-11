@@ -70,6 +70,41 @@ export default function Page() {
         </BlurFade>
       </section>
 
+      <section id="projects">
+        <div className="space-y-4 w-full py-2">
+          <BlurFade delay={BLUR_FADE_DELAY * 3}>
+            <h2 className="text-lg font-bold font-mono">Highlights</h2>
+          </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 4}>
+            <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
+              I&apos;ve worked on a variety of projects, from simple websites to
+              complex web applications. Here are a few of my favorites.
+            </Markdown>
+          </BlurFade>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-[800px] mx-auto">
+            {DATA.projects.map((project, id) => (
+              <BlurFade
+                key={project.title}
+                delay={BLUR_FADE_DELAY * 12 + id * 0.05}
+              >
+                <ProjectCard
+                  href={project.href}
+                  key={project.title}
+                  title={project.title}
+                  description={project.description}
+                  dates={project.dates}
+                  tags={project.technologies}
+                  image={project.image}
+                  video={project.video}
+                  links={project.links}
+                />
+              </BlurFade>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="work">
         <div className="flex min-h-0 flex-col gap-y-3">
           <BlurFade delay={BLUR_FADE_DELAY * 5}>
@@ -130,40 +165,6 @@ export default function Page() {
                 <Badge key={skill} variant="secondary" className="rounded-sm">
                   {skill}
                 </Badge>
-              </BlurFade>
-            ))}
-          </div>
-        </div>
-      </section>
-      <section id="projects">
-        <div className="space-y-4 w-full py-2">
-          <BlurFade delay={BLUR_FADE_DELAY * 3}>
-            <h2 className="text-lg font-bold font-mono">My Projects</h2>
-          </BlurFade>
-          <BlurFade delay={BLUR_FADE_DELAY * 4}>
-            <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
-              I&apos;ve worked on a variety of projects, from simple websites to
-              complex web applications. Here are a few of my favorites.
-            </Markdown>
-          </BlurFade>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-[800px] mx-auto">
-            {DATA.projects.map((project, id) => (
-              <BlurFade
-                key={project.title}
-                delay={BLUR_FADE_DELAY * 12 + id * 0.05}
-              >
-                <ProjectCard
-                  href={project.href}
-                  key={project.title}
-                  title={project.title}
-                  description={project.description}
-                  dates={project.dates}
-                  tags={project.technologies}
-                  image={project.image}
-                  video={project.video}
-                  links={project.links}
-                />
               </BlurFade>
             ))}
           </div>

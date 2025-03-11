@@ -50,15 +50,6 @@ export async function getStartup(slug: string) {
   let source = fs.readFileSync(filePath, "utf-8");
   const { content: rawContent, data: metadata } = matter(source);
 
-  // Fetch tweets if they exist in metadata
-  if (metadata.tweet) {
-    const tweetIds = metadata.tweet.map((url: string) => url.split("/").pop());
-    const tweets = await Promise.all(
-      tweetIds.map((id: string) => getTweet(id))
-    );
-    metadata.tweetData = tweets;
-  }
-
   const content = await markdownToHTML(rawContent);
   return {
     source: content,

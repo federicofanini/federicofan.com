@@ -16,15 +16,20 @@ type Tweet = {
 };
 
 export const getTweet = cache(async (id: string): Promise<Tweet> => {
-  if (!process.env.TWITTER_BEARER_TOKEN) {
-    throw new Error("TWITTER_BEARER_TOKEN is not defined");
+  // Load environment variable at runtime
+  const twitterToken = process.env.TWITTER_BEARER_TOKEN;
+
+  if (!twitterToken) {
+    throw new Error(
+      "TWITTER_BEARER_TOKEN is not defined. Please check your .env file."
+    );
   }
 
   const response = await fetch(
     `https://api.twitter.com/2/tweets/${id}?tweet.fields=created_at,public_metrics&expansions=author_id&user.fields=name,username,profile_image_url`,
     {
       headers: {
-        Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+        Authorization: `Bearer ${twitterToken}`,
       },
       next: {
         revalidate: 86400, // Cache for 24 hours

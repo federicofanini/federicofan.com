@@ -1,15 +1,61 @@
+"use client";
+
 import Image from "next/image";
 import { getTweet } from "./tweet";
-import { cache } from "react";
+import { use } from "react";
 
 interface TweetProps {
   url: string;
+  id: string;
 }
 
-export const Tweet = async ({ url }: TweetProps) => {
-  const id = url.split("/").pop()!;
-  const tweet = await getTweet(id);
-  const tweetUrl = url;
+export function Tweet({ url, id }: TweetProps) {
+  // Extract tweet ID from URL if not provided directly
+  const tweetId = id || url.split("/status/")[1]?.split("?")[0];
+
+  if (!tweetId) {
+    return (
+      <div className="tweet bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 my-4">
+        <div className="flex items-center justify-between">
+          <p className="text-gray-600 dark:text-gray-400">
+            Invalid tweet URL format. Please check the URL.
+          </p>
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-600"
+          >
+            View on Twitter →
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  let tweet;
+  try {
+    tweet = use(getTweet(tweetId));
+  } catch (error) {
+    // Fallback UI when tweet cannot be fetched
+    return (
+      <div className="tweet bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 my-4">
+        <div className="flex items-center justify-between">
+          <p className="text-gray-600 dark:text-gray-400">
+            Unable to load tweet. Please check it directly on Twitter.
+          </p>
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-600"
+          >
+            View on Twitter →
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="tweet bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 my-4">
@@ -31,7 +77,7 @@ export const Tweet = async ({ url }: TweetProps) => {
           </span>
         </div>
         <a
-          href={tweetUrl}
+          href={url}
           target="_blank"
           rel="noopener noreferrer"
           className="ml-auto"
@@ -50,7 +96,7 @@ export const Tweet = async ({ url }: TweetProps) => {
       </div>
       <div className="tweet-metrics flex space-x-12 text-gray-500 dark:text-gray-400 text-sm">
         <a
-          href={tweetUrl}
+          href={url}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center hover:text-blue-500 transition-colors"
@@ -61,7 +107,7 @@ export const Tweet = async ({ url }: TweetProps) => {
           {tweet.public_metrics.reply_count}
         </a>
         <a
-          href={tweetUrl}
+          href={url}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center hover:text-green-500 transition-colors"
@@ -72,7 +118,7 @@ export const Tweet = async ({ url }: TweetProps) => {
           {tweet.public_metrics.retweet_count}
         </a>
         <a
-          href={tweetUrl}
+          href={url}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center hover:text-red-500 transition-colors"
@@ -85,4 +131,4 @@ export const Tweet = async ({ url }: TweetProps) => {
       </div>
     </div>
   );
-};
+}

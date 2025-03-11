@@ -186,7 +186,7 @@ export const DATA = {
     {
       title: "GymBrah.com",
       href: "https://gymbrah.com",
-      dates: "Jan 2025 - Present",
+      dates: "Jan 2025",
       active: true,
       description:
         "Gymbrah is an open-source fitness platform that helps you track your workouts and progress. For [gym owners](https://coach.gymbrah.com), it's a way to manage their business and for [gym users](https://athlete.gymbrah.com/), it's a way to track their progress and stay motivated.",
@@ -213,7 +213,37 @@ export const DATA = {
         },
       ],
       image: "",
-      video: "/gb.mp4",
+      video: "/startup/gb.mp4",
+    },
+    {
+      title: "fed.fan",
+      href: "https://fed.fan",
+      dates: "Feb 2025",
+      active: true,
+      description:
+        "A free link in bio for founders. Showcasing your projects, links and socials. Easy to set up and fully open-source.",
+      technologies: [
+        "Next.js",
+        "Typescript",
+        "Supabase",
+        "Prisma",
+        "TailwindCSS",
+        "Shadcn UI",
+      ],
+      links: [
+        {
+          type: "Website",
+          href: "https://fed.fan",
+          icon: <Icons.globe className="size-3" />,
+        },
+        {
+          type: "Source",
+          href: "https://github.com/federicofanini/fed.fan",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "",
+      video: "/startup/fedfan.mp4",
     },
   ],
   hackathons: [],

@@ -127,31 +127,26 @@ export default function Page() {
           <div className="flex flex-wrap gap-1">
             {DATA.skills.map((skill, id) => (
               <BlurFade key={skill} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
-                <Badge key={skill}>{skill}</Badge>
+                <Badge key={skill} variant="secondary" className="rounded-sm">
+                  {skill}
+                </Badge>
               </BlurFade>
             ))}
           </div>
         </div>
       </section>
       <section id="projects">
-        <div className="space-y-12 w-full py-12">
-          <BlurFade delay={BLUR_FADE_DELAY * 11}>
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <div className="inline-block rounded-sm bg-foreground text-background px-3 py-1 text-sm font-mono">
-                  My Projects
-                </div>
-                <h2 className="text-xl font-bold tracking-tighter sm:text-4xl">
-                  Check out my latest work
-                </h2>
-                <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed">
-                  I&apos;ve worked on a variety of projects, from simple
-                  websites to complex web applications. Here are a few of my
-                  favorites.
-                </p>
-              </div>
-            </div>
+        <div className="space-y-4 w-full py-2">
+          <BlurFade delay={BLUR_FADE_DELAY * 3}>
+            <h2 className="text-lg font-bold font-mono">My Projects</h2>
           </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 4}>
+            <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
+              I&apos;ve worked on a variety of projects, from simple websites to
+              complex web applications. Here are a few of my favorites.
+            </Markdown>
+          </BlurFade>
+
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-[800px] mx-auto">
             {DATA.projects.map((project, id) => (
               <BlurFade
@@ -176,26 +171,21 @@ export default function Page() {
       </section>
 
       <section id="contact">
-        <div className="grid items-center justify-center gap-4 px-4 text-center md:px-6 w-full py-12">
-          <BlurFade delay={BLUR_FADE_DELAY * 16}>
-            <div className="space-y-3">
-              <div className="inline-block rounded-sm bg-foreground text-background px-3 py-1 text-sm font-mono">
-                Contact
-              </div>
-              <h2 className="text-xl font-bold tracking-tighter sm:text-4xl">
-                Get in Touch
-              </h2>
-              <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed">
-                Want to chat? Just shoot me a dm{" "}
-                <Link
-                  href={DATA.contact.social.X.url}
-                  className="text-white hover:underline font-semibold"
-                >
-                  with a direct question on twitter
-                </Link>{" "}
-                and I&apos;ll respond whenever I can.
-              </p>
-            </div>
+        <div className="grid items-start justify-start gap-4 text-start w-full py-4">
+          <BlurFade delay={BLUR_FADE_DELAY * 3}>
+            <h2 className="text-lg font-bold font-mono">Contact</h2>
+          </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 4}>
+            <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed">
+              Want to chat? Just shoot me a dm{" "}
+              <Link
+                href={DATA.contact.social.X.url}
+                className="text-white hover:underline font-semibold"
+              >
+                with a direct question on twitter
+              </Link>{" "}
+              and I&apos;ll respond whenever I can.
+            </p>
           </BlurFade>
         </div>
       </section>

@@ -46,8 +46,9 @@ export default function Page() {
           >
             boschitt.com
           </Link>
-          . Clean, minimal, developer‑grade. Some say “over‑engineered”; I
-          prefer “future‑you will thank me”.
+          . Clean, minimal, developer‑grade. Some say
+          &quot;over‑engineered&quot;; I prefer &quot;future‑you will thank
+          me&quot;.
         </p>
       </header>
 
@@ -100,11 +101,13 @@ export default function Page() {
           <li>
             “It works on my machine” is a valid CI status. Kidding. Mostly.
           </li>
-          <li>If it compiles, we ship. If it doesn’t, we ship to staging.</li>
+          <li>
+            If it compiles, we ship. If it doesn&apos;t, we ship to staging.
+          </li>
         </ul>
-        <p className="text-[11px] text-muted-foreground font-mono">
-          // Warning: page may cause uncontrollable urge to refactor your
-          current site
+        <p className="text-[11px] text-muted-foreground font-mono text-yellow-500">
+          Warning: page may cause uncontrollable urge to refactor your current
+          site
         </p>
       </section>
 

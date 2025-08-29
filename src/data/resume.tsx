@@ -61,6 +61,18 @@ export const DATA = {
 
   work: [
     {
+      company: "Uara.co",
+      href: "https://uara.co",
+      badges: [],
+      location: "Remote",
+      title: "Engineering & Founder",
+      logoUrl: "/uaraco.png",
+      start: "2025",
+      end: "Present",
+      abandoned: false,
+      description: "Website as a Service - need a website?",
+    },
+    {
       company: "GymBrah.com",
       href: "https://gymbrah.com",
       badges: [],

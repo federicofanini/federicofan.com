@@ -1,4 +1,4 @@
-import { HackathonCard } from "@/components/hackathon-card";
+import { WebsitesBanner } from "@/components/websites";
 import BlurFade from "@/components/magicui/blur-fade";
 import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { ProjectCard } from "@/components/project-card";
@@ -69,6 +69,8 @@ export default function Page() {
           </Markdown>
         </BlurFade>
       </section>
+
+      <WebsitesBanner />
 
       <section id="projects">
         <div className="space-y-4 w-full py-2">

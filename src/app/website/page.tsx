@@ -31,22 +31,13 @@ export default function Page() {
         <div className="inline-flex items-center gap-2 rounded-md border px-2 py-1 text-xs font-mono text-muted-foreground">
           <span>$</span>
           <span>pnpm create website</span>
-          <span className="hidden sm:inline text-green-500">
-            --send-money-to-me
-          </span>
+          <span className="hidden sm:inline text-green-500">uara.co</span>
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight">Websites</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">
+          World-Class Websites
+        </h1>
         <p className="text-sm text-muted-foreground">
-          In my free time I build websites. I built all the websites featured on
-          the homepage — my startups (failed and not) — and{" "}
-          <Link
-            href="https://boschitt.com"
-            target="_blank"
-            className="underline underline-offset-4 hover:text-foreground"
-          >
-            boschitt.com
-          </Link>
-          . Clean, minimal, developer‑grade. Some say
+          I build clean and minimal websites. Some say
           &quot;over‑engineered&quot;; I prefer &quot;future‑you will thank
           me&quot;.
         </p>
@@ -56,13 +47,13 @@ export default function Page() {
         <p className="text-sm text-muted-foreground">
           Need one for your startup or business? No carousels. No pop‑ups. No
           14MB hero videos. Just clean design, fast performance, and quick
-          turnaround. If Lighthouse could smile, it would.
+          turnaround.
         </p>
         <div className="flex flex-wrap gap-2">
-          <Link href="mailto:f@fanini.eu" target="_blank">
-            Get a quote at{" "}
-            <span className="font-mono text-teal-300 hover:underline underline-offset-4">
-              f@fanini.eu
+          <Link href="https://uara.co" target="_blank">
+            See more at{" "}
+            <span className="font-mono text-teal-300 hover:underline underline-offset-4 font-semibold">
+              uara.co
             </span>
           </Link>
         </div>

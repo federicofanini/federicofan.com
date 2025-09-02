@@ -39,6 +39,29 @@ export function GrowthMetricsTable({
     return value.toLocaleString();
   };
 
+  const getValueTrend = (
+    currentValue: number | null,
+    previousValue: number | null
+  ): "increase" | "decrease" | "neutral" => {
+    if (currentValue === null || previousValue === null) return "neutral";
+    if (currentValue > previousValue) return "increase";
+    if (currentValue < previousValue) return "decrease";
+    return "neutral";
+  };
+
+  const getTrendClassName = (
+    trend: "increase" | "decrease" | "neutral"
+  ): string => {
+    switch (trend) {
+      case "increase":
+        return "font-mono font-semibold text-green-400 drop-shadow-[0_0_8px_rgb(34,197,94)]";
+      case "decrease":
+        return "font-mono font-semibold text-red-400 drop-shadow-[0_0_8px_rgb(239,68,68)]";
+      default:
+        return "font-mono";
+    }
+  };
+
   const getMetricKeys = (): (keyof Omit<MetricData, "month">)[] => [
     "followers",
     "verifiedFollowers",
@@ -85,22 +108,31 @@ export function GrowthMetricsTable({
                   <td className="p-2 font-medium text-sm">
                     {metricLabels[key] || key}
                   </td>
-                  {metrics.map((metric) => (
-                    <td
-                      key={`${metric.month}-${key}`}
-                      className="text-center p-2 text-sm"
-                    >
-                      <span
-                        className={
-                          metric[key] !== null
-                            ? "font-mono"
-                            : "text-muted-foreground"
-                        }
+                  {metrics.map((metric, index) => {
+                    const previousMetric =
+                      index > 0 ? metrics[index - 1] : null;
+                    const trend = getValueTrend(
+                      metric[key],
+                      previousMetric ? previousMetric[key] : null
+                    );
+
+                    return (
+                      <td
+                        key={`${metric.month}-${key}`}
+                        className="text-center p-2 text-sm"
                       >
-                        {formatValue(metric[key], key)}
-                      </span>
-                    </td>
-                  ))}
+                        <span
+                          className={
+                            metric[key] !== null
+                              ? getTrendClassName(trend)
+                              : "text-muted-foreground"
+                          }
+                        >
+                          {formatValue(metric[key], key)}
+                        </span>
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>

@@ -1,4 +1,5 @@
 import { WebsitesBanner } from "@/components/websites";
+import { XGrowthSummary } from "@/components/x-growth-summary";
 import BlurFade from "@/components/magicui/blur-fade";
 import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { ProjectCard } from "@/components/project-card";
@@ -70,14 +71,23 @@ export default function Page() {
         </BlurFade>
       </section>
 
+      <section id="x-growth">
+        <BlurFade delay={BLUR_FADE_DELAY * 5}>
+          <h2 className="text-lg font-bold font-mono">Social Growth</h2>
+        </BlurFade>
+        <BlurFade delay={BLUR_FADE_DELAY * 6}>
+          <XGrowthSummary />
+        </BlurFade>
+      </section>
+
       <WebsitesBanner />
 
       <section id="projects">
         <div className="space-y-4 w-full py-2">
-          <BlurFade delay={BLUR_FADE_DELAY * 3}>
+          <BlurFade delay={BLUR_FADE_DELAY * 7}>
             <h2 className="text-lg font-bold font-mono">Highlights</h2>
           </BlurFade>
-          <BlurFade delay={BLUR_FADE_DELAY * 4}>
+          <BlurFade delay={BLUR_FADE_DELAY * 8}>
             <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
               I&apos;ve worked on a variety of projects, from simple websites to
               complex web applications. Here are a few of my favorites.
@@ -88,7 +98,7 @@ export default function Page() {
             {DATA.projects.map((project, id) => (
               <BlurFade
                 key={project.title}
-                delay={BLUR_FADE_DELAY * 12 + id * 0.05}
+                delay={BLUR_FADE_DELAY * 9 + id * 0.05}
               >
                 <ProjectCard
                   href={project.href}
@@ -109,13 +119,13 @@ export default function Page() {
 
       <section id="work">
         <div className="flex min-h-0 flex-col gap-y-3">
-          <BlurFade delay={BLUR_FADE_DELAY * 5}>
+          <BlurFade delay={BLUR_FADE_DELAY * 10}>
             <h2 className="text-lg font-bold font-mono">Startups</h2>
           </BlurFade>
           {DATA.work.map((work, id) => (
             <BlurFade
               key={work.company}
-              delay={BLUR_FADE_DELAY * 6 + id * 0.05}
+              delay={BLUR_FADE_DELAY * 11 + id * 0.05}
             >
               <ResumeCard
                 key={work.company}
@@ -135,13 +145,13 @@ export default function Page() {
       </section>
       <section id="education">
         <div className="flex min-h-0 flex-col gap-y-3">
-          <BlurFade delay={BLUR_FADE_DELAY * 7}>
+          <BlurFade delay={BLUR_FADE_DELAY * 12}>
             <h2 className="text-lg font-bold font-mono">Education</h2>
           </BlurFade>
           {DATA.education.map((education, id) => (
             <BlurFade
               key={education.school}
-              delay={BLUR_FADE_DELAY * 8 + id * 0.05}
+              delay={BLUR_FADE_DELAY * 13 + id * 0.05}
             >
               <ResumeCard
                 key={education.school}
@@ -158,12 +168,12 @@ export default function Page() {
       </section>
       <section id="skills">
         <div className="flex min-h-0 flex-col gap-y-3">
-          <BlurFade delay={BLUR_FADE_DELAY * 9}>
+          <BlurFade delay={BLUR_FADE_DELAY * 14}>
             <h2 className="text-lg font-bold font-mono">Skills</h2>
           </BlurFade>
           <div className="flex flex-wrap gap-1">
             {DATA.skills.map((skill, id) => (
-              <BlurFade key={skill} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
+              <BlurFade key={skill} delay={BLUR_FADE_DELAY * 15 + id * 0.05}>
                 <Badge key={skill} variant="secondary" className="rounded-sm">
                   {skill}
                 </Badge>
@@ -175,10 +185,10 @@ export default function Page() {
 
       <section id="contact">
         <div className="grid items-start justify-start gap-4 text-start w-full py-4">
-          <BlurFade delay={BLUR_FADE_DELAY * 3}>
+          <BlurFade delay={BLUR_FADE_DELAY * 16}>
             <h2 className="text-lg font-bold font-mono">Contact</h2>
           </BlurFade>
-          <BlurFade delay={BLUR_FADE_DELAY * 4}>
+          <BlurFade delay={BLUR_FADE_DELAY * 17}>
             <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed">
               Want to chat? Just shoot me a dm{" "}
               <Link

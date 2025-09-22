@@ -61,6 +61,18 @@ export const DATA = {
 
   work: [
     {
+      company: "Uara.ai",
+      href: "https://uara.ai?via=federicofan.com",
+      badges: [],
+      location: "Remote",
+      title: "Engineering & Founder",
+      logoUrl: "/uaraai.svg",
+      start: "2025",
+      end: "Present",
+      abandoned: false,
+      description: "Your Notion for Health, AI powered.",
+    },
+    {
       company: "Uara.co",
       href: "https://uara.co",
       badges: [],

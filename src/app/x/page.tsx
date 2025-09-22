@@ -1,10 +1,7 @@
 import BlurFade from "@/components/magicui/blur-fade";
-import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { TwitterProfileCard } from "@/components/x-profile-card";
 import { GrowthMetricsTable } from "@/components/x-growth-metrics-table";
 import { X_GROWTH_DATA } from "@/data/x-growth";
-import { Badge } from "@/components/ui/badge";
-import { TrendingUpIcon, BarChart3Icon } from "lucide-react";
 
 const BLUR_FADE_DELAY = 0.04;
 

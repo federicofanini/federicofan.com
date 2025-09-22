@@ -209,6 +209,33 @@ export const DATA = {
   ],
   projects: [
     {
+      title: "Uara.ai",
+      href: "https://uara.ai?ref=federicofan.com&utm_source=highlights",
+      dates: "Jan 2025",
+      active: true,
+      description:
+        "Uara.ai is a consumer longevity platform that aggregates health data (Whoop, labs, fitness, nutrition) and applies AI to generate actionable insights. Users, can simply understand their numbers and improve healthspan.",
+      technologies: [
+        "Next.js",
+        "Typescript",
+        "Supabase",
+        "Prisma",
+        "TailwindCSS",
+        "Stripe",
+        "Shadcn UI",
+        "Resend",
+      ],
+      links: [
+        {
+          type: "Website",
+          href: "https://uara.ai?ref=federicofan.com&utm_source=highlights",
+          icon: <Icons.globe className="size-3" />,
+        },
+      ],
+      image: "/startup/uara.png",
+      video: "",
+    },
+    {
       title: "GymBrah.com",
       href: "https://gymbrah.com",
       dates: "Jan 2025",

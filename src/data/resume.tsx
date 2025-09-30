@@ -61,6 +61,19 @@ export const DATA = {
 
   work: [
     {
+      company: "LockedIn",
+      href: "https://lockedin.bio?via=federicofan.com",
+      badges: [],
+      location: "Remote",
+      title: "Engineering & Founder",
+      logoUrl: "/lockedin.png",
+      start: "2025",
+      end: "Present",
+      abandoned: false,
+      description:
+        "Open source social accountability app for builders, makers, and founders.",
+    },
+    {
       company: "Uara.ai",
       href: "https://uara.ai?via=federicofan.com",
       badges: [],
@@ -208,6 +221,33 @@ export const DATA = {
     },
   ],
   projects: [
+    {
+      title: "LockedIn",
+      href: "https://lockedin.bio?ref=federicofan.com&utm_source=highlights",
+      dates: "Sep 2025",
+      active: true,
+      description:
+        "Open source social accountability app for builders, makers, and founders. Demo [here](https://lockedin.bio/fed).",
+      technologies: [
+        "Next.js",
+        "Typescript",
+        "Supabase",
+        "Prisma",
+        "TailwindCSS",
+        "Stripe",
+        "Shadcn UI",
+        "Resend",
+      ],
+      links: [
+        {
+          type: "Website",
+          href: "https://lockedin.bio?ref=federicofan.com&utm_source=highlights",
+          icon: <Icons.globe className="size-3" />,
+        },
+      ],
+      image: "/startup/lockedin.png",
+      video: "",
+    },
     {
       title: "Uara.ai",
       href: "https://uara.ai?ref=federicofan.com&utm_source=highlights",

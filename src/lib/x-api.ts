@@ -338,13 +338,6 @@ export async function fetchXMonthlyMetrics(
     let totalReplies = 0;
     let totalReposts = 0;
 
-    for (const tweet of tweets.data.data) {
-      const metrics = tweet.public_metrics || {};
-      totalLikes += metrics.like_count || 0;
-      totalReplies += metrics.reply_count || 0;
-      totalReposts += metrics.retweet_count || 0;
-    }
-
     const totalEngagements = totalLikes + totalReplies + totalReposts;
 
     // Get current follower count

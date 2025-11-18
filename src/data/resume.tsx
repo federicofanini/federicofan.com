@@ -4,13 +4,13 @@ import { Code2, HomeIcon, NotebookIcon } from "lucide-react";
 export const DATA = {
   name: "Federico Fan",
   initials: "FF",
-  url: "https://federicofanini.it",
+  url: "https://federicofan.com",
   location: "Rome, IT",
   locationLink: "https://www.google.com/maps/place/rome",
   description: "I don't build resumes, I build startups.",
   summary:
     "I love taking an idea, turning it into something real, and seeing people actually use it. From IoT-powered healthcare to [open-source fitness tools](https://gymbrah.com?via=federicofanini), I’m all about shipping fast and solving real problems. My stack? A good dose of curiosity and a drive to keep building.",
-  avatarUrl: "/me.jpg",
+  avatarUrl: "/fedef.jpg",
   skills: [
     "React",
     "Next.js",

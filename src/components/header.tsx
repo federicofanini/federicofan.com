@@ -34,20 +34,16 @@ export function Header({
           <div className="flex items-center gap-2">
             <Link href="/" className="hover:opacity-80 transition-opacity">
               <Image
-                src="/logo/logo-white.png"
-                alt="Logo"
-                width={24}
-                height={24}
-                className="dark:hidden"
+                src="/logo/fed.svg"
+                alt="fed"
+                width={32}
+                height={32}
+                className="dark:invert"
                 priority
-              />
-              <Image
-                src="/logo/logo-black.png"
-                alt="Logo"
-                width={24}
-                height={24}
-                className="hidden dark:block"
-                priority
+                quality={100}
+                fetchPriority="high"
+                sizes="32px"
+                draggable={false}
               />
             </Link>
           </div>

@@ -297,6 +297,161 @@ export async function fetchXFollowerCount(
 }
 
 /**
+ * Fetch recent tweets and calculate engagement metrics for the current month
+ * @param username - X/Twitter username (without @)
+ * @param userId - User ID from the profile
+ * @returns Aggregated metrics for the current month
+ */
+export async function fetchXMonthlyMetrics(
+  username: string,
+  userId: string
+): Promise<{
+  followers: number;
+  likes: number;
+  replies: number;
+  reposts: number;
+  engagements: number;
+} | null> {
+  try {
+    const cleanUsername = username.replace("@", "");
+    const client = getXClient();
+
+    // Get current month's start date
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startTime = startOfMonth.toISOString();
+
+    // Fetch tweets from the current month
+    // Note: Twitter API v2 has rate limits, so we'll fetch recent tweets
+    const tweets = await client.v2.userTimeline(userId, {
+      max_results: 100,
+      "tweet.fields": ["created_at", "public_metrics"],
+      start_time: startTime,
+    });
+
+    if (!tweets.data?.data) {
+      return null;
+    }
+
+    // Aggregate metrics
+    let totalLikes = 0;
+    let totalReplies = 0;
+    let totalReposts = 0;
+
+    for (const tweet of tweets.data.data) {
+      const metrics = tweet.public_metrics || {};
+      totalLikes += metrics.like_count || 0;
+      totalReplies += metrics.reply_count || 0;
+      totalReposts += metrics.retweet_count || 0;
+    }
+
+    const totalEngagements = totalLikes + totalReplies + totalReposts;
+
+    // Get current follower count
+    const followers = await fetchXFollowerCount(cleanUsername);
+
+    return {
+      followers: followers || 0,
+      likes: totalLikes,
+      replies: totalReplies,
+      reposts: totalReposts,
+      engagements: totalEngagements,
+    };
+  } catch (error) {
+    console.error(`Error fetching X monthly metrics for @${username}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Fetch full X user profile data
+ * @param username - X/Twitter username (without @)
+ * @returns Full profile data including bio, location, website, metrics, etc.
+ */
+export async function fetchXFullProfile(username: string): Promise<{
+  name: string;
+  username: string;
+  bio: string;
+  avatarUrl: string;
+  verified: boolean;
+  location: string | null;
+  website: string | null;
+  joinDate: string;
+  following: number;
+  followers: number;
+  userId: string;
+} | null> {
+  try {
+    // Remove @ if present
+    const cleanUsername = username.replace("@", "");
+
+    // Fetch from X API with all available fields
+    const client = getXClient();
+    const user = await client.v2.userByUsername(cleanUsername, {
+      "user.fields": [
+        "name",
+        "username",
+        "description",
+        "profile_image_url",
+        "verified",
+        "location",
+        "url",
+        "created_at",
+        "public_metrics",
+        "id",
+      ],
+    });
+
+    if (!user.data) {
+      return null;
+    }
+
+    // Get high-res profile image (replace _normal with _400x400)
+    const profileImageUrl =
+      user.data.profile_image_url?.replace("_normal", "_400x400") ||
+      user.data.profile_image_url ||
+      "";
+
+    // Format join date
+    let joinDate = "Unknown";
+    if (user.data.created_at) {
+      const date = new Date(user.data.created_at);
+      const month = date.toLocaleString("default", { month: "long" });
+      const year = date.getFullYear();
+      joinDate = `${month} ${year}`;
+    }
+
+    // Extract website domain from URL if available
+    let website: string | null = null;
+    if (user.data.url) {
+      try {
+        const url = new URL(user.data.url);
+        website = url.hostname.replace("www.", "");
+      } catch {
+        website = user.data.url;
+      }
+    }
+
+    return {
+      name: user.data.name || cleanUsername,
+      username: `@${user.data.username || cleanUsername}`,
+      bio: user.data.description || "",
+      avatarUrl: profileImageUrl,
+      verified: user.data.verified || false,
+      location: user.data.location || null,
+      website,
+      joinDate,
+      following: user.data.public_metrics?.following_count || 0,
+      followers: user.data.public_metrics?.followers_count || 0,
+      userId: user.data.id || "",
+    };
+  } catch (error) {
+    console.error(`Error fetching X full profile for @${username}:`, error);
+    return null;
+  }
+}
+
+/**
  * Get cache statistics
  */
 export function getXCacheStats(): {

@@ -8,7 +8,7 @@ const BLUR_FADE_DELAY = 0.04;
 export default function XGrowthPage() {
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-12 max-w-4xl mx-auto">
-      {/* Profile Card Section */}
+      {/* Profile Card Section 
       <section id="profile" className="space-y-6">
         <BlurFade delay={BLUR_FADE_DELAY * 4}>
           <div className="flex justify-center">
@@ -27,9 +27,9 @@ export default function XGrowthPage() {
             />
           </div>
         </BlurFade>
-      </section>
+      </section>*/}
 
-      {/* Metrics Table */}
+      {/* Metrics Table 
       <section id="metrics" className="space-y-6">
         <BlurFade delay={BLUR_FADE_DELAY * 8}>
           <GrowthMetricsTable
@@ -37,7 +37,7 @@ export default function XGrowthPage() {
             metricLabels={X_GROWTH_DATA.metricLabels}
           />
         </BlurFade>
-      </section>
+      </section>*/}
     </main>
   );
 }

@@ -9,7 +9,7 @@ export function Work() {
     <section id="work">
       <div className="flex min-h-0 flex-col gap-y-3">
         <BlurFade delay={BLUR_FADE_DELAY * 10}>
-          <h2 className="text-lg font-bold font-mono">Startups</h2>
+          <h2 className="text-lg font-bold font-mono">My startups</h2>
         </BlurFade>
         {DATA.work.map((work, id) => (
           <BlurFade key={work.company} delay={BLUR_FADE_DELAY * 11 + id * 0.05}>

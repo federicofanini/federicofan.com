@@ -134,7 +134,7 @@ export function TwitterProfileCard({
           </div>
           <div className="flex items-center gap-1">
             <CalendarIcon className="size-4" />
-            <span>Joined {joinDate}</span>
+            <span>{joinDate}</span>
           </div>
         </div>
 

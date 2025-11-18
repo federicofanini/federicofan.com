@@ -85,25 +85,16 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-bold font-mono">GPT-5 says: (memes)</h2>
-        <ul className="list-disc pl-5 space-y-1 text-xs text-muted-foreground">
-          <li>Move fast, break nothing… except bundle size (we fix it).</li>
-          <li>
-            “It works on my machine” is a valid CI status. Kidding. Mostly.
-          </li>
-          <li>
-            If it compiles, we ship. If it doesn&apos;t, we ship to staging.
-          </li>
-        </ul>
-        <p className="text-[11px] text-muted-foreground font-mono text-yellow-500">
-          Warning: page may cause uncontrollable urge to refactor your current
-          site
-        </p>
-      </section>
-
       <footer className="pt-2 text-xs text-muted-foreground">
-        <p>Prefer DMs? You can also reach me from the dock below.</p>
+        <Link
+          href="mailto:fed@uara.ai"
+          className="hover:text-black dark:hover:text-white transition-colors"
+        >
+          Prefer email? Drop me a line at{" "}
+          <span className="font-mono hover:underline underline-offset-4 font-semibold">
+            fed@uara.ai
+          </span>
+        </Link>
       </footer>
     </main>
   );

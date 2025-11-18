@@ -22,9 +22,9 @@ export const DATA = {
     "IoT",
   ],
   navbar: [
-    { href: "/", icon: HomeIcon, label: "Home" },
-    { href: "/website", icon: Code2, label: "Website" },
-    { href: "/blog", icon: NotebookIcon, label: "Blog" },
+    { href: "/agency", icon: Code2, label: "agency" },
+    { href: "/journey", icon: NotebookIcon, label: "journey" },
+    { href: "/blog", icon: NotebookIcon, label: "blog" },
   ],
   contact: {
     email: "f@fanini.eu",

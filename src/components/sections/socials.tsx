@@ -16,10 +16,10 @@ export function SocialsSmall() {
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center size-8 rounded-md border bg-background hover:bg-accent transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-md border bg-background hover:bg-accent transition-colors"
               >
                 <social.icon className="size-4" />
-                <span className="sr-only">{social.name}</span>
+                <span className="text-xs font-mono">{social.name}</span>
               </Link>
             ))}
           </div>

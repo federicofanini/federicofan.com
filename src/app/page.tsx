@@ -15,10 +15,11 @@ export default function Page() {
       <Hero />
       <Work />
       <SocialsShowcase youtubeVideoId="" youtubeFollowers={1000} />
-      <About />
-      <XGrowth />
-      <WebsitesBanner />
+
       <Projects />
+
+      <About />
+      <WebsitesBanner />
       <Education />
       <Skills />
       <Contact />

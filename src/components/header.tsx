@@ -83,7 +83,7 @@ export function Header({
               <div className="flex items-center gap-2">
                 {Object.values(DATA.contact.social)
                   .filter(
-                    (social) => social.name === "Youtube" || social.name === "X"
+                    (social) => social.name === "YouTube" || social.name === "X"
                   )
                   .map((social) => (
                     <Link

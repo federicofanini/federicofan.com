@@ -35,7 +35,6 @@ export function Hero() {
               delay={BLUR_FADE_DELAY}
               text={DATA.description}
             />
-            <SocialsSmall />
           </div>
         </div>
       </div>

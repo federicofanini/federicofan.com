@@ -38,7 +38,7 @@ export const DATA = {
         navbar: true,
       },
       Youtube: {
-        name: "Youtube",
+        name: "YouTube",
         url: "https://dub.sh/fedef",
         icon: Icons.youtube,
 
@@ -80,12 +80,6 @@ export const DATA = {
 
       //  navbar: true,
       //},
-      email: {
-        name: "Send Email",
-        url: "mailto:fed@uara.ai",
-        icon: Icons.email,
-        navbar: false,
-      },
     },
   },
 

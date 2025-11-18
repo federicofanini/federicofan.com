@@ -11,7 +11,7 @@ export function WebsitesBanner() {
   return (
     <section id="websites" className="space-y-4 w-full py-2">
       <BlurFade delay={BLUR_FADE_DELAY * 3}>
-        <h2 className="text-lg font-bold font-mono">Websites</h2>
+        <h2 className="text-lg font-bold font-mono">My tiny agency</h2>
       </BlurFade>
       <BlurFade delay={BLUR_FADE_DELAY * 4}>
         <p className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">

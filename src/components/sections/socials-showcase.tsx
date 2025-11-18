@@ -5,6 +5,7 @@ import BlurFade from "../magicui/blur-fade";
 import Link from "next/link";
 import { X_GROWTH_DATA } from "@/data/x-growth";
 import { useEffect, useState } from "react";
+import { SocialsSmall } from "./socials";
 
 const BLUR_FADE_DELAY = 0.0;
 const REFRESH_INTERVAL = 60 * 60 * 1000; // 1 hour in milliseconds
@@ -190,6 +191,13 @@ export function SocialsShowcase({
               </div>
             </Link>
           </div>
+        </BlurFade>
+
+        <BlurFade delay={BLUR_FADE_DELAY} className="flex flex-col gap-3">
+          <h3 className="font-mono text-sm text-muted-foreground">
+            All my links:
+          </h3>
+          <SocialsSmall />
         </BlurFade>
 
         {/* Embeddings Grid */}

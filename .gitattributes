@@ -1,4 +1,7 @@
-*.mp4 filter=lfs diff=lfs merge=lfs -text
+# Exclude public folder from LFS - these need to be served as static assets
+public/** !filter !diff !merge
+
+# Track video files with LFS (except in public folder)
 *.mov filter=lfs diff=lfs merge=lfs -text
 *.avi filter=lfs diff=lfs merge=lfs -text
 *.webm filter=lfs diff=lfs merge=lfs -text

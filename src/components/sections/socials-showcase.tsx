@@ -141,61 +141,9 @@ export function SocialsShowcase({
   return (
     <section id="socials-showcase">
       <div className="space-y-6 w-full max-w-4xl mx-auto">
-        <BlurFade delay={BLUR_FADE_DELAY}>
+        <BlurFade delay={BLUR_FADE_DELAY} className="flex flex-col gap-3">
           <h3 className="text-lg font-bold font-mono">
             Documenting my journey on:
-          </h3>
-        </BlurFade>
-        {/* Profile Cards */}
-        <BlurFade delay={BLUR_FADE_DELAY}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* X Profile Card */}
-            <Link
-              href={xSocial.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative overflow-hidden rounded-lg border border-border/50 bg-background/50 p-4 hover:bg-accent/50 hover:border-border transition-all duration-300"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0">
-                  <xSocial.icon className="size-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm">X</div>
-                  <div className="text-xs text-muted-foreground font-mono">
-                    {xFollowerCount.toLocaleString()} followers
-                  </div>
-                </div>
-              </div>
-            </Link>
-
-            {/* YouTube Profile Card */}
-            <Link
-              href={youtubeSocial.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative overflow-hidden rounded-lg border border-border/50 bg-background/50 p-4 hover:bg-accent/50 hover:border-border transition-all duration-300"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0">
-                  <youtubeSocial.icon className="size-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm">YouTube</div>
-                  <div className="text-xs text-muted-foreground font-mono">
-                    {ytFollowerCount > 0
-                      ? `${ytFollowerCount.toLocaleString()} subs`
-                      : "Subscribe"}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </div>
-        </BlurFade>
-
-        <BlurFade delay={BLUR_FADE_DELAY} className="flex flex-col gap-3">
-          <h3 className="font-mono text-sm text-muted-foreground">
-            All my links:
           </h3>
           <SocialsSmall />
         </BlurFade>

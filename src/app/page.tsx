@@ -7,16 +7,18 @@ import { Work } from "@/components/sections/work";
 import { Education } from "@/components/sections/education";
 import { Skills } from "@/components/sections/skills";
 import { Contact } from "@/components/sections/contact";
+import { SocialsShowcase } from "@/components/sections/socials-showcase";
 
 export default function Page() {
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       <Hero />
+      <Work />
+      <SocialsShowcase youtubeVideoId="" youtubeFollowers={1000} />
       <About />
       <XGrowth />
       <WebsitesBanner />
       <Projects />
-      <Work />
       <Education />
       <Skills />
       <Contact />

@@ -30,10 +30,25 @@ export const DATA = {
     email: "f@fanini.eu",
     tel: "+39",
     social: {
-      GitHub: {
-        name: "GitHub",
-        url: "https://git.new/fedef",
-        icon: Icons.github,
+      X: {
+        name: "X",
+        url: "https://dub.sh/fedef",
+        icon: Icons.x,
+
+        navbar: true,
+      },
+      Youtube: {
+        name: "Youtube",
+        url: "https://dub.sh/fedef",
+        icon: Icons.youtube,
+
+        navbar: true,
+      },
+      Instagram: {
+        name: "Instagram",
+        url: "https://dub.sh/fedef",
+        icon: Icons.instagram,
+
         navbar: true,
       },
       LinkedIn: {
@@ -43,16 +58,31 @@ export const DATA = {
 
         navbar: true,
       },
-      X: {
-        name: "X",
-        url: "https://dub.sh/fedef",
-        icon: Icons.x,
-
+      GitHub: {
+        name: "GitHub",
+        url: "https://git.new/fedef",
+        icon: Icons.github,
         navbar: true,
       },
+
+      //Beehiiv: {
+      //  name: "Beehiiv",
+      //  url: "https://dub.sh/fedef",
+      //  icon: Icons.beehiiv,
+
+      //  navbar: true,
+      //},
+
+      //Threads: {
+      //  name: "Threads",
+      //  url: "https://dub.sh/fedef",
+      //  icon: Icons.threads,
+
+      //  navbar: true,
+      //},
       email: {
         name: "Send Email",
-        url: "mailto:f@fanini.eu",
+        url: "mailto:fed@uara.ai",
         icon: Icons.email,
         navbar: false,
       },

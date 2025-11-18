@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 interface HeaderProps {
@@ -31,14 +32,24 @@ export function Header({
         {/* Logo Section */}
         {showLogo && (
           <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="text-sm font-semibold tracking-tight hover:opacity-80 transition-opacity"
-            >
-              {DATA.initials}
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <Image
+                src="/logo/logo-white.png"
+                alt="Logo"
+                width={24}
+                height={24}
+                className="dark:hidden"
+                priority
+              />
+              <Image
+                src="/logo/logo-black.png"
+                alt="Logo"
+                width={24}
+                height={24}
+                className="hidden dark:block"
+                priority
+              />
             </Link>
-            {/* Placeholder: Logo image can go here */}
-            {/* <Image src="/logo.svg" alt="Logo" width={24} height={24} /> */}
           </div>
         )}
 

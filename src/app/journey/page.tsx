@@ -38,6 +38,9 @@ export default function XGrowthPage() {
           />
         </BlurFade>
       </section>*/}
+      <span className="text-sm text-muted-foreground font-mono">
+        Coming soon...
+      </span>
     </main>
   );
 }

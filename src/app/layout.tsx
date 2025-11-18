@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
 import { Provider as Analytics } from "@/lib/events/client";
+import { Footer } from "@/components/sections/footer";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -67,7 +68,7 @@ export default function RootLayout({
           <TooltipProvider delayDuration={0}>
             <Header />
             {children}
-            <Navbar />
+            <Footer />
           </TooltipProvider>
         </ThemeProvider>
         <Analytics />

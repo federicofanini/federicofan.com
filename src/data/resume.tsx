@@ -39,14 +39,14 @@ export const DATA = {
       },
       Youtube: {
         name: "YouTube",
-        url: "https://dub.sh/fedef",
+        url: "https://dub.sh/fedef-yt",
         icon: Icons.youtube,
 
         navbar: true,
       },
       Instagram: {
         name: "Instagram",
-        url: "https://dub.sh/fedef",
+        url: "https://dub.sh/fedef-ig",
         icon: Icons.instagram,
 
         navbar: true,

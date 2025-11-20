@@ -5,6 +5,7 @@ import BlurFade from "@/components/magicui/blur-fade";
 import { IconBriefcase } from "@tabler/icons-react";
 import Cal, { getCalApi } from "@calcom/embed-react";
 import { useEffect } from "react";
+import { WebsiteTiers } from "./website-tiers";
 
 const BLUR_FADE_DELAY = 0.0;
 
@@ -52,17 +53,7 @@ export function WebsitesBanner() {
         </span>
       </BlurFade>
       <BlurFade delay={BLUR_FADE_DELAY * 4}>
-        <span className="text-md text-muted-foreground">
-          <br />
-          See more at{" "}
-          <Link
-            href="https://uara.co"
-            target="_blank"
-            className="font-semibold text-primary hover:underline underline-offset-4"
-          >
-            uara.co
-          </Link>
-        </span>
+        <WebsiteTiers />
       </BlurFade>
       <BlurFade delay={BLUR_FADE_DELAY * 5}>
         <div className="mt-6">

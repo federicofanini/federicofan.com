@@ -1,4 +1,4 @@
-import { WebsitesBanner } from "@/components/websites";
+import { WebsitesBanner } from "@/components/sections/websites";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { XGrowth } from "@/components/sections/x-growth";

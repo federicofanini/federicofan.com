@@ -8,11 +8,15 @@ import { Education } from "@/components/sections/education";
 import { Skills } from "@/components/sections/skills";
 import { Contact } from "@/components/sections/contact";
 import { SocialsShowcase } from "@/components/sections/socials-showcase";
+import { HomepageFeedback } from "@/components/feedback/homepage-feedback";
+import { getTopFeedbacks } from "@/data/feedback";
 
-export default function Page() {
+export default async function Page() {
+  const { data: topFeedbacks } = await getTopFeedbacks();
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       <Hero />
+      <HomepageFeedback topFeedbacks={topFeedbacks || []} />
       <Work />
       <SocialsShowcase youtubeVideoId="" youtubeFollowers={1000} />
 

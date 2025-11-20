@@ -48,6 +48,26 @@ export async function getFeedbacks(limit = 100) {
   }
 }
 
+export async function getTopFeedbacks(limit = 2) {
+  try {
+    const feedbacks = await prisma.feedback.findMany({
+      orderBy: [
+        {
+          upvotes: "desc",
+        },
+        {
+          createdAt: "desc",
+        },
+      ],
+      take: limit,
+    });
+    return { success: true, data: feedbacks };
+  } catch (error) {
+    console.error("Failed to fetch top feedbacks:", error);
+    return { success: false, data: [] };
+  }
+}
+
 export async function upvoteFeedback(id: string) {
   try {
     const feedback = await prisma.feedback.update({

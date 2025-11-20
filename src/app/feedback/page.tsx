@@ -49,7 +49,7 @@ export default async function FeedbackPage() {
 
       <section id="list">
         <BlurFade delay={BLUR_FADE_DELAY * 3}>
-          <h2 className="text-xl font-bold mb-4">Recent Feedback</h2>
+          <h2 className="text-xl font-bold mb-4 font-museo">Recent Feedback</h2>
           <FeedbackList feedbacks={feedbacks || []} />
         </BlurFade>
       </section>

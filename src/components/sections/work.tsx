@@ -9,6 +9,7 @@ import {
   IconArrowAutofitDown,
   IconArrowDown,
   IconArrowUpRight,
+  IconLegoFilled,
 } from "@tabler/icons-react";
 import Link from "next/link";
 
@@ -29,7 +30,7 @@ export function Work() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold font-museo flex items-center gap-2">
               My startups
-              <IconArrowDown className="size-5" />
+              <IconLegoFilled className="size-5" />
             </h2>
             <Button
               variant="secondary"

@@ -16,9 +16,6 @@ export default async function Page() {
       <Hero />
       <Documenting />
       <Work />
-      <SocialsShowcase youtubeVideoId="" youtubeFollowers={1000} />
-
-      <Projects />
 
       <About />
       <WebsitesBanner />

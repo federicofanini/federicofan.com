@@ -61,7 +61,7 @@ export function Documenting() {
           <SocialsSmall />
         </BlurFade>
 
-        <HomepageFeedback topFeedbacks={topFeedbacks} />
+        {/* <HomepageFeedback topFeedbacks={topFeedbacks} /> */}
       </div>
     </section>
   );

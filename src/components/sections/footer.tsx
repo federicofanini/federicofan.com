@@ -30,7 +30,7 @@ const links = [
 export function Footer() {
   return (
     <footer className="mt-12 justify-center items-center mx-auto text-sm text-muted-foreground font-mono">
-      <span className="text-muted-foreground order-last block text-center text-sm md:order-first">
+      <span className="text-muted-foreground order-last block text-center text-sm md:order-first font-museo">
         © {new Date().getFullYear()} Federico Fan, All rights reserved
       </span>
     </footer>

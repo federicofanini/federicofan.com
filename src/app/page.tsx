@@ -20,7 +20,6 @@ export default async function Page() {
       <About />
       <WebsitesBanner />
       <Education />
-      <Skills />
       <Contact />
     </main>
   );

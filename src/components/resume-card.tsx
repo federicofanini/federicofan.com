@@ -4,6 +4,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import {
+  IconLink,
+  IconToggleLeftFilled,
+  IconToggleRightFilled,
+} from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { ChevronRightIcon, ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
@@ -87,29 +92,43 @@ export const ResumeCard = ({
             </Link>
             <div className="flex items-center gap-2 justify-end">
               <div className="text-xs sm:text-sm tabular-nums text-muted-foreground">
-                {abandoned ? (
-                  <Badge variant="secondary" className="text-xs">
-                    💀 abandoned
-                  </Badge>
-                ) : (
-                  period
-                )}
+                <Badge
+                  className={`text-xs px-2 py-0.5 font-museo ${
+                    abandoned
+                      ? "bg-background text-secondary border border-secondary hover:bg-secondary hover:text-secondary-foreground"
+                      : "bg-background text-emerald-600 border border-emerald-600 hover:bg-emerald-600 hover:text-white"
+                  }`}
+                >
+                  {abandoned ? (
+                    <span className="flex items-center gap-1">
+                      <IconToggleLeftFilled className="size-4" />
+                      Shut Down
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1">
+                      <IconToggleRightFilled className="size-4" />
+                      Live
+                    </span>
+                  )}
+                </Badge>
               </div>
               {href && (
                 <Link
                   href={href}
-                  className="size-6 inline-flex items-center justify-center rounded-md border bg-background hover:bg-accent transition-colors"
+                  className="size-6 inline-flex items-center justify-center rounded-md border bg-background hover:bg-primary transition-colors hover:text-white"
                   target="_blank"
                 >
-                  <ExternalLinkIcon className="size-3" />
+                  <IconLink className="size-3" />
                   <span className="sr-only">Visit {title}</span>
                 </Link>
               )}
             </div>
           </div>
-          {subtitle && <div className="font-sans text-xs">{subtitle}</div>}
+          {description && (
+            <div className="font-sans text-xs">{description}</div>
+          )}
         </CardHeader>
-        {description && (
+        {subtitle && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{
@@ -123,7 +142,7 @@ export const ResumeCard = ({
             }}
             className="mt-2 text-xs"
           >
-            {description}
+            {subtitle}
           </motion.div>
         )}
       </div>

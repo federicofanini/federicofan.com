@@ -8,9 +8,9 @@ const BLUR_FADE_DELAY = 0.0;
 export function Projects() {
   return (
     <section id="projects">
-      <div className="space-y-4 w-full py-2">
+      <div className="space-y-4 w-full py-8">
         <BlurFade delay={BLUR_FADE_DELAY * 7}>
-          <h2 className="text-lg font-bold font-mono">Highlights</h2>
+          <h2 className="text-lg font-bold font-museo">Highlights</h2>
         </BlurFade>
         <BlurFade delay={BLUR_FADE_DELAY * 8}>
           <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">

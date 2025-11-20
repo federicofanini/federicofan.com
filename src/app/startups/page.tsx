@@ -1,21 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import BlurFade from "../magicui/blur-fade";
+import BlurFade from "@/components/magicui/blur-fade";
 import { DATA } from "@/data/resume";
-import { ResumeCard } from "../resume-card";
-import { Button } from "../ui/button";
+import { ResumeCard } from "@/components/resume-card";
+import { Button } from "@/components/ui/button";
 import {
   IconArrowAutofitDown,
   IconArrowDown,
   IconArrowUpRight,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { Projects } from "@/components/sections/projects";
 
 const BLUR_FADE_DELAY = 0.0;
-const INITIAL_DISPLAY_COUNT = 6;
+const INITIAL_DISPLAY_COUNT = 300;
 
-export function Work() {
+export default function Startups() {
   const [showAll, setShowAll] = useState(false);
   const displayedWork = showAll
     ? DATA.work
@@ -23,8 +24,8 @@ export function Work() {
   const hasMore = DATA.work.length > INITIAL_DISPLAY_COUNT;
 
   return (
-    <section id="work">
-      <div className="flex min-h-0 flex-col gap-y-3">
+    <section id="startups" className="mt-10">
+      <div className="flex min-h-0 flex-col gap-y-8">
         <BlurFade delay={BLUR_FADE_DELAY * 10} className="mb-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold font-museo flex items-center gap-2">
@@ -73,6 +74,9 @@ export function Work() {
             </Button>
           </BlurFade>
         )}
+        <BlurFade delay={BLUR_FADE_DELAY * 11 + displayedWork.length * 0.05}>
+          <Projects />
+        </BlurFade>
       </div>
     </section>
   );

@@ -5,22 +5,21 @@ import BlurFade from "../magicui/blur-fade";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { X_GROWTH_DATA } from "@/data/x-growth";
+import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
 
 const BLUR_FADE_DELAY = 0.0;
 const REFRESH_INTERVAL = 60 * 60 * 1000; // 1 hour in milliseconds
 
 // Format number with shorter format for mobile
-const formatCount = (count: number, isMobile: boolean = false): string => {
-  if (isMobile) {
-    if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
-    }
-    if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}k`;
-    }
-    return count.toString();
+const formatCount = (count: number): string => {
+  if (count >= 1000000) {
+    return `${(count / 1000000).toFixed(1)}M`;
   }
-  return count.toLocaleString();
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}k`;
+  }
+  return count.toString();
 };
 
 export function SocialsSmall() {
@@ -113,62 +112,58 @@ export function SocialsSmall() {
 
   // Get label for count
   const getCountLabel = (socialName: string): string => {
-    if (socialName === "X") return "followers";
-    if (socialName === "YouTube") return "subs";
+    if (socialName === "X") return "Followers";
+    if (socialName === "YouTube") return "Subscribers";
     return "";
   };
 
   return (
     <section id="socials">
-      <div className="flex min-h-0 flex-col gap-y-1">
-        <BlurFade delay={BLUR_FADE_DELAY * 4.7}>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap gap-2 sm:gap-3 w-full auto-rows-fr">
-            {socials.map((social, index) => {
-              // Create bento grid pattern on mobile
-              // First item spans full width, second spans 2 rows, rest fill space
-              const isFirst = index === 0;
-              const isSecond = index === 1;
-              const colSpan = isFirst ? "col-span-2" : "";
-              const rowSpan = isSecond ? "row-span-1" : "";
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {socials.map((social, index) => {
+          const count = getSocialCount(social.name);
+          const countLabel = getCountLabel(social.name);
 
-              const count = getSocialCount(social.name);
-              const countLabel = getCountLabel(social.name);
-
-              return (
-                <Link
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${colSpan} ${rowSpan} inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-3 sm:px-4 sm:py-3 rounded-lg border bg-background hover:bg-accent transition-all touch-manipulation active:scale-95 min-h-[60px] sm:min-h-[70px] md:min-h-[44px] md:min-w-[44px] w-full`}
-                  aria-label={social.name}
-                >
-                  <social.icon className="size-5 sm:size-5 md:size-4 flex-shrink-0" />
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    <span className="text-xs sm:text-sm md:text-xs font-mono whitespace-nowrap">
+          return (
+            <BlurFade
+              key={social.name}
+              delay={BLUR_FADE_DELAY * 4 + index * 0.05}
+            >
+              <Link
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "group flex items-center justify-between p-4 rounded-xl border bg-card text-card-foreground transition-all duration-300",
+                  "hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 hover:-translate-y-0.5",
+                  "h-full"
+                )}
+                aria-label={social.name}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-lg border bg-background">
+                    <social.icon className="size-5 transition-transform group-hover:scale-110" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold font-geist leading-none mb-1">
                       {social.name}
                     </span>
-                    {count !== null && (
-                      <span className="text-[9px] sm:text-[10px] md:text-[9px] font-mono text-muted-foreground">
-                        <span className="hidden sm:inline">
-                          {formatCount(count, false)}
-                        </span>
-                        <span className="sm:hidden">
-                          {formatCount(count, true)}
-                        </span>
-                        {countLabel && (
-                          <span className="hidden md:inline ml-1">
-                            {countLabel}
-                          </span>
-                        )}
+                    {count !== null ? (
+                      <span className="text-xs text-muted-foreground font-mono">
+                        {formatCount(count)} {countLabel}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">
+                        Follow
                       </span>
                     )}
                   </div>
-                </Link>
-              );
-            })}
-          </div>
-        </BlurFade>
+                </div>
+                <ChevronRight className="size-4 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all duration-300" />
+              </Link>
+            </BlurFade>
+          );
+        })}
       </div>
     </section>
   );

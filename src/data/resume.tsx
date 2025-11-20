@@ -7,7 +7,7 @@ export const DATA = {
   url: "https://federicofan.com",
   location: "Rome, IT",
   locationLink: "https://www.google.com/maps/place/rome",
-  description: "I don't build resumes, I build startups.",
+  description: "I don't build resumes, I build startups (and documenting it).",
   summary:
     "I love taking an idea, turning it into something real, and seeing people actually use it. From IoT-powered healthcare to [open-source fitness tools](https://gymbrah.com?via=federicofanini), I’m all about shipping fast and solving real problems. My stack? A good dose of curiosity and a drive to keep building.",
   avatarUrl: "/fedef.jpg",

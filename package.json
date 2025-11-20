@@ -10,6 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@calcom/embed-react": "^1.5.3",
     "@mdx-js/loader": "^3.1.0",
     "@next/mdx": "^15.2.2",
     "@openpanel/nextjs": "^1.0.7",

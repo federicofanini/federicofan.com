@@ -9,14 +9,14 @@ import {
   IconArrowAutofitDown,
   IconArrowDown,
   IconArrowUpRight,
-  IconLegoFilled,
+  IconLego,
 } from "@tabler/icons-react";
 import Link from "next/link";
 
 const BLUR_FADE_DELAY = 0.0;
 const INITIAL_DISPLAY_COUNT = 6;
 
-export function Work() {
+export function Startups() {
   const [showAll, setShowAll] = useState(false);
   const displayedWork = showAll
     ? DATA.work
@@ -24,13 +24,13 @@ export function Work() {
   const hasMore = DATA.work.length > INITIAL_DISPLAY_COUNT;
 
   return (
-    <section id="work">
+    <section id="startups">
       <div className="flex min-h-0 flex-col gap-y-3">
         <BlurFade delay={BLUR_FADE_DELAY * 10} className="mb-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold font-museo flex items-center gap-2">
               My startups
-              <IconLegoFilled className="size-5" />
+              <IconLego className="size-5" />
             </h2>
             <Button
               variant="secondary"

@@ -23,10 +23,8 @@ export const DATA = {
   ],
   navbar: [
     { href: "/startups", icon: Code2, label: "startups" },
-    { href: "/feedback", icon: NotebookIcon, label: "feedback" },
-    { href: "/notes", icon: NotebookIcon, label: "notes" },
-    { href: "/work", icon: NotebookIcon, label: "work" },
-    { href: "/inquiry", icon: NotebookIcon, label: "inquiry" },
+    { href: "/#work", icon: NotebookIcon, label: "work" },
+    { href: "/#contact", icon: NotebookIcon, label: "contact" },
   ],
   contact: {
     email: "f@fanini.eu",

@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface HeaderProps {
   className?: string;
@@ -26,6 +27,8 @@ export function Header({
   showThemeToggle = true,
   showSocials = true,
 }: HeaderProps) {
+  const pathname = usePathname();
+
   return (
     <header className={cn("w-full bg-background/95 mb-6", className)}>
       <div className="mx-auto flex h-14 max-w-2xl items-center justify-between">
@@ -52,15 +55,23 @@ export function Header({
         {/* Navigation Section */}
         {showNav && (
           <nav className="flex items-center gap-1 overflow-x-auto">
-            {DATA.navbar.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="px-2 py-1.5 md:px-3 text-xs md:text-sm text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors whitespace-nowrap"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {DATA.navbar.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "px-2 py-1.5 md:px-3 text-xs md:text-sm transition-all whitespace-nowrap",
+                    isActive
+                      ? "text-foreground font-museo font-semibold underline underline-offset-4"
+                      : "text-muted-foreground hover:text-foreground hover:font-museo hover:font-semibold hover:underline hover:underline-offset-4"
+                  )}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             {/* Placeholder: Additional nav items */}
             {/* <Link href="/projects" className="...">Projects</Link> */}
           </nav>

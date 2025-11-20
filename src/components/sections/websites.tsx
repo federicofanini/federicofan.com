@@ -18,7 +18,7 @@ export function WebsitesBanner() {
   }, []);
 
   return (
-    <section id="websites">
+    <section id="work">
       <BlurFade delay={BLUR_FADE_DELAY * 3}>
         <h2 className="text-lg font-bold font-museo flex items-center gap-2">
           My tiny agency

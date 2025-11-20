@@ -14,7 +14,7 @@ export function Hero() {
           <div className="flex-col flex flex-1 space-y-1">
             <BlurFadeText
               delay={BLUR_FADE_DELAY}
-              className="text-2xl font-bold tracking-tight sm:text-3xl transition-all duration-500 group-hover:tracking-tighter"
+              className="text-2xl font-museo font-bold tracking-tight sm:text-3xl transition-all duration-500 group-hover:tracking-tighter"
               yOffset={8}
               text={`${DATA.name.split(" ")[0]} here 👋🏼`}
             />

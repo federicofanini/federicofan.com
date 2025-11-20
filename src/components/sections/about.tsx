@@ -1,7 +1,11 @@
+"use client";
+
 import BlurFade from "../magicui/blur-fade";
 import Markdown from "react-markdown";
 import { DATA } from "@/data/resume";
 import { IconTooltip } from "@tabler/icons-react";
+import Image from "next/image";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const BLUR_FADE_DELAY = 0.0;
 
@@ -55,6 +59,39 @@ export function About() {
           </span>
           .
         </span>
+      </BlurFade>
+      <BlurFade delay={BLUR_FADE_DELAY * 3}>
+        <div className="flex items-center gap-2 mt-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                className="relative flex-shrink-0 cursor-pointer group"
+                aria-label="View profile photo"
+              >
+                <Image
+                  src="/fedef.jpg"
+                  alt="Federico Fan"
+                  width={40}
+                  height={40}
+                  className="rounded-lg border border-primary aspect-square object-cover transition-all duration-300 group-hover:shadow-lg group-hover:scale-105"
+                />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl p-0 overflow-hidden">
+              <div className="relative w-full aspect-square">
+                <Image
+                  src="/fedef.jpg"
+                  alt="Federico Fan"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
+          <span className="text-sm text-muted-foreground">
+            Btw, this is me. Hope to connect with you somewhere.
+          </span>
+        </div>
       </BlurFade>
     </section>
   );

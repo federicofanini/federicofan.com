@@ -71,7 +71,7 @@ export default function RootLayout({
           fontMuseo.variable
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="dark">
+        <ThemeProvider attribute="class" defaultTheme="light">
           <TooltipProvider delayDuration={0}>
             <Header showSocials={false} />
             {children}

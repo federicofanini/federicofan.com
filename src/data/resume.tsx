@@ -25,7 +25,7 @@ export const DATA = {
     { href: "/startups", icon: Code2, label: "startups" },
     { href: "/feedback", icon: Code2, label: "feedback" },
     { href: "/#work", icon: NotebookIcon, label: "work" },
-    { href: "/#contact", icon: NotebookIcon, label: "contact" },
+    { href: "/notes", icon: NotebookIcon, label: "notes" },
   ],
   contact: {
     email: "f@fanini.eu",

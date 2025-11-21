@@ -2,9 +2,12 @@
 User-agent: *
 Allow: /
 
+# Explicitly allow notes
+Allow: /notes
+Allow: /notes/
+
 # Disallow admin/api routes
 Disallow: /api/
 
 # Sitemap location
 Sitemap: https://federicofan.com/sitemap.xml
-

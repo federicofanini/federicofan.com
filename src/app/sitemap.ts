@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next";
 import { DATA } from "@/data/resume";
+import { getBlogPosts } from "@/data/blog";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = DATA.url;
 
   // Define all your routes here
@@ -10,17 +11,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/startups",
     "/feedback",
     "/journey",
-    "/blog",
+    "/notes",
     "/agency",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: "weekly" as const,
+    changeFrequency: "daily" as const,
     priority: route === "" ? 1 : 0.8,
   }));
 
-  // Add blog posts dynamically if you have them
-  // You can fetch blog post slugs here and add them to the sitemap
+  // Add notes/blog posts dynamically
+  const posts = await getBlogPosts();
+  const notesRoutes = posts.map((post) => ({
+    url: `${baseUrl}/notes/${post.slug}`,
+    lastModified: new Date(post.metadata.publishedAt),
+    changeFrequency: "daily" as const,
+    priority: 0.9,
+  }));
 
-  return routes;
+  return [...routes, ...notesRoutes];
 }

@@ -19,22 +19,30 @@ function getMDXFiles(dir: string) {
   return fs.readdirSync(dir).filter((file) => path.extname(file) === ".mdx");
 }
 
-export async function markdownToHTML(markdown: string) {
-  const p = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkRehype)
-    .use(rehypePrettyCode, {
-      // https://rehype-pretty.pages.dev/#usage
-      theme: {
-        light: "min-light",
-        dark: "min-dark",
-      },
-      keepBackground: false,
-    })
-    .use(rehypeStringify)
-    .process(markdown);
+// Cache the unified processor to avoid creating multiple Shiki instances
+let cachedProcessor: any = null;
 
+function getProcessor() {
+  if (!cachedProcessor) {
+    cachedProcessor = unified()
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkRehype)
+      .use(rehypePrettyCode, {
+        // https://rehype-pretty.pages.dev/#usage
+        theme: {
+          light: "min-light",
+          dark: "min-dark",
+        },
+        keepBackground: false,
+      })
+      .use(rehypeStringify);
+  }
+  return cachedProcessor;
+}
+
+export async function markdownToHTML(markdown: string) {
+  const p = await getProcessor().process(markdown);
   return p.toString();
 }
 
@@ -61,7 +69,7 @@ async function getAllPosts(dir: string) {
         slug,
         source,
       };
-    }),
+    })
   );
 }
 

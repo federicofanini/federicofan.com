@@ -4,6 +4,10 @@ import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
+import { IconCalendar } from "@tabler/icons-react";
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
@@ -35,7 +39,7 @@ export async function generateMetadata({
       description,
       type: "article",
       publishedTime,
-      url: `${DATA.url}/blog/${post.slug}`,
+      url: `${DATA.url}/notes/${post.slug}`,
       images: [
         {
           url: ogImage,
@@ -51,7 +55,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Blog({
+export default async function Note({
   params,
 }: {
   params: {
@@ -65,7 +69,7 @@ export default async function Blog({
   }
 
   return (
-    <section id="blog">
+    <main className="flex flex-col min-h-[100dvh] max-w-2xl mx-auto py-12 px-4">
       <script
         type="application/ld+json"
         suppressHydrationWarning
@@ -80,7 +84,7 @@ export default async function Blog({
             image: post.metadata.image
               ? `${DATA.url}${post.metadata.image}`
               : `${DATA.url}/og?title=${post.metadata.title}`,
-            url: `${DATA.url}/blog/${post.slug}`,
+            url: `${DATA.url}/notes/${post.slug}`,
             author: {
               "@type": "Person",
               name: DATA.name,
@@ -88,20 +92,53 @@ export default async function Blog({
           }),
         }}
       />
-      <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">
-        {post.metadata.title}
-      </h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
+
+      {/* Back button */}
+      <Link
+        href="/notes"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 group"
+      >
+        <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+        Back to notes
+      </Link>
+
+      {/* Header section */}
+      <header className="mb-8">
+        {/* Title */}
+        <h1 className="font-semibold text-2xl md:text-3xl tracking-tight mb-4 font-museo">
+          {post.metadata.title}
+        </h1>
+
+        {/* Date */}
         <Suspense fallback={<p className="h-5" />}>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          <p className="text-[10px] text-muted-foreground font-mono flex items-center gap-1">
+            <IconCalendar className="size-3" />
             {formatDate(post.metadata.publishedAt)}
           </p>
         </Suspense>
-      </div>
+      </header>
+
+      {/* Featured image */}
+      {post.metadata.image && (
+        <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-8">
+          <Image
+            src={post.metadata.image}
+            alt={post.metadata.title}
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      )}
+
+      {/* Content */}
       <article
-        className="prose dark:prose-invert"
+        className="prose prose-neutral dark:prose-invert max-w-none"
         dangerouslySetInnerHTML={{ __html: post.source }}
       ></article>
-    </section>
+      <p className="text-sm text-muted-foreground font-museo mt-4">
+        Federico Fan
+      </p>
+    </main>
   );
 }

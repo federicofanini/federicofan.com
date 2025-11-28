@@ -92,11 +92,11 @@ export const DATA = {
       badges: [],
       location: "Remote",
       title: "Engineering & Founder",
-      logoUrl: "/uaraai.svg",
+      logoUrl: "/uaraai.png",
       start: "2025",
       end: "Present",
       abandoned: false,
-      description: "Your Notion for Health, AI powered.",
+      description: "Video script editor for content creators.",
     },
     {
       company: "LockedIn",

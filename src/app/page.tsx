@@ -10,9 +10,10 @@ export default async function Page() {
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       <Hero />
-      <Documenting />
 
       <Startups />
+      <Documenting />
+
       <About />
 
       <WebsitesBanner />

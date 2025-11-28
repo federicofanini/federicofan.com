@@ -23,9 +23,10 @@ export const DATA = {
   ],
   navbar: [
     { href: "/startups", icon: Code2, label: "startups" },
-    { href: "/feedback", icon: Code2, label: "feedback" },
+    { href: "/feedback", icon: Code2, label: "tips" },
     { href: "/#work", icon: NotebookIcon, label: "work" },
     { href: "/notes", icon: NotebookIcon, label: "notes" },
+    { href: "/cv", icon: NotebookIcon, label: "cv" },
   ],
   contact: {
     email: "f@fanini.eu",
@@ -86,6 +87,18 @@ export const DATA = {
 
   work: [
     {
+      company: "Uara.ai",
+      href: "https://uara.ai?via=federicofan.com",
+      badges: [],
+      location: "Remote",
+      title: "Engineering & Founder",
+      logoUrl: "/uaraai.svg",
+      start: "2025",
+      end: "Present",
+      abandoned: false,
+      description: "Your Notion for Health, AI powered.",
+    },
+    {
       company: "LockedIn",
       href: "https://lockedin.bio?via=federicofan.com",
       badges: [],
@@ -97,18 +110,6 @@ export const DATA = {
       abandoned: false,
       description:
         "Open source social accountability app for builders, makers, and founders.",
-    },
-    {
-      company: "Uara.ai",
-      href: "https://uara.ai?via=federicofan.com",
-      badges: [],
-      location: "Remote",
-      title: "Engineering & Founder",
-      logoUrl: "/uaraai.svg",
-      start: "2025",
-      end: "Present",
-      abandoned: false,
-      description: "Your Notion for Health, AI powered.",
     },
     {
       company: "Uara.co",

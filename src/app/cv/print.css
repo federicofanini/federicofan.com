@@ -1,0 +1,288 @@
+@media print {
+  /* Reset page margins and setup */
+  @page {
+    margin: 0.65in 0.75in;
+    size: letter portrait;
+  }
+
+  /* Hide unnecessary elements */
+  nav,
+  footer,
+  .print\:hidden,
+  button,
+  [class*="fixed"] {
+    display: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 28px !important;
+  }
+
+  /* Optimize text for print */
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: "Geist", -apple-system, system-ui, sans-serif !important;
+  }
+
+  /* Remove animations and transitions */
+  * {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    font-family: "Geist", -apple-system, system-ui, sans-serif !important;
+  }
+
+  /* Ensure content fits properly */
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: auto !important;
+  }
+
+  /* Header section */
+  #cv-header {
+    margin-bottom: 28px !important;
+    padding-bottom: 22px !important;
+    border-bottom: 1.5px solid #000000 !important;
+  }
+
+  /* Main heading (Name) */
+  #cv-header h1,
+  #cv-header .text-4xl,
+  #cv-header .sm\:text-5xl {
+    font-size: 32px !important;
+    line-height: 1.1 !important;
+    margin-bottom: 8px !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  /* Subtitle (Job title) */
+  #cv-header .text-xl {
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+    margin-bottom: 14px !important;
+    color: #000000 !important;
+    font-weight: 400 !important;
+  }
+
+  /* Contact info */
+  #cv-header .text-sm {
+    font-size: 11px !important;
+    color: #000000 !important;
+    font-weight: 400 !important;
+  }
+
+  /* Section headings */
+  h2,
+  .text-lg.font-bold {
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    margin-bottom: 14px !important;
+    margin-top: 0 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  /* Subsection headings */
+  h3,
+  .text-md.font-semibold,
+  .text-sm.font-semibold {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    margin-bottom: 3px !important;
+    margin-top: 0 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Body text */
+  p,
+  .text-md,
+  .text-sm {
+    font-size: 11px !important;
+    line-height: 1.65 !important;
+    color: #000000 !important;
+    margin-bottom: 6px !important;
+    font-weight: 400 !important;
+  }
+
+  /* Extra small text */
+  .text-xs {
+    font-size: 10px !important;
+    line-height: 1.5 !important;
+    color: #000000 !important;
+    font-weight: 400 !important;
+  }
+
+  /* Lists */
+  ul {
+    margin-top: 6px !important;
+    margin-bottom: 10px !important;
+    padding-left: 16px !important;
+  }
+
+  li {
+    font-size: 11px !important;
+    line-height: 1.65 !important;
+    color: #000000 !important;
+    margin-bottom: 4px !important;
+    font-weight: 400 !important;
+  }
+
+  /* Ensure links are visible */
+  a {
+    text-decoration: none !important;
+    color: #000000 !important;
+  }
+
+  a[href^="http"]:after {
+    content: none !important;
+  }
+
+  /* Badges */
+  [class*="badge"],
+  [class*="Badge"] {
+    display: inline-block !important;
+    padding: 2px 6px !important;
+    margin: 2px !important;
+    font-size: 9px !important;
+    line-height: 1.4 !important;
+    border-radius: 2px !important;
+    border: 1px solid #000000 !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-weight: 400 !important;
+  }
+
+  /* Icons - hide in professional B&W version */
+  svg {
+    display: none !important;
+  }
+
+  /* Experience section spacing */
+  #cv-experience > div > div {
+    margin-bottom: 18px !important;
+  }
+
+  /* Skills section */
+  #cv-skills > div > div {
+    margin-bottom: 12px !important;
+  }
+
+  #cv-skills h3 {
+    margin-bottom: 6px !important;
+    color: #000000 !important;
+    font-weight: 600 !important;
+  }
+
+  /* Projects section */
+  #cv-projects > div > div > div {
+    margin-bottom: 10px !important;
+  }
+
+  #cv-projects h3 {
+    font-weight: 700 !important;
+  }
+
+  /* Education section */
+  #cv-education > div > div > div {
+    margin-bottom: 10px !important;
+  }
+
+  /* Strengths badges */
+  #cv-strengths [class*="badge"],
+  #cv-strengths [class*="Badge"] {
+    border: 1px solid #000000 !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+  }
+
+  /* Languages section */
+  #cv-languages .flex.justify-between {
+    margin-bottom: 6px !important;
+  }
+
+  #cv-languages .font-medium {
+    font-weight: 600 !important;
+  }
+
+  /* Emphasize primary elements with bold */
+  .text-primary {
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  .text-muted-foreground {
+    color: #000000 !important;
+  }
+
+  /* Period/date styling */
+  #cv-experience .text-xs,
+  #cv-education .text-xs {
+    font-style: italic !important;
+  }
+
+  /* Company/school names */
+  #cv-experience .text-primary,
+  #cv-education .text-primary {
+    font-weight: 600 !important;
+  }
+
+  /* Spacing utilities */
+  .space-y-10 > * + * {
+    margin-top: 28px !important;
+  }
+
+  .space-y-6 > * + * {
+    margin-top: 18px !important;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 14px !important;
+  }
+
+  .space-y-3 > * + * {
+    margin-top: 10px !important;
+  }
+
+  .space-y-2 > * + * {
+    margin-top: 6px !important;
+  }
+
+  /* Gap utilities for flex */
+  .gap-4 {
+    gap: 10px !important;
+  }
+
+  .gap-3 {
+    gap: 8px !important;
+  }
+
+  .gap-2 {
+    gap: 6px !important;
+  }
+
+  .gap-1 {
+    gap: 4px !important;
+  }
+
+  /* Professional polish */
+  * {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+}

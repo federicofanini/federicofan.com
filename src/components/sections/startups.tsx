@@ -57,6 +57,7 @@ export function Startups() {
               period={`${work.start} - ${work.end ?? "Present"}`}
               description={work.description}
               abandoned={work.abandoned}
+              sale={work.sale}
             />
           </BlurFade>
         ))}

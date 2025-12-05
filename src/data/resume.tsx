@@ -96,6 +96,8 @@ export const DATA = {
       start: "2025",
       end: "Present",
       abandoned: false,
+      sale: false,
+      askingPrice: undefined,
       description: "Video script editor for content creators.",
     },
     {
@@ -108,6 +110,8 @@ export const DATA = {
       start: "2025",
       end: "Present",
       abandoned: false,
+      sale: true,
+      askingPrice: "$1,000",
       description:
         "Open source social accountability app for builders, makers, and founders.",
     },
@@ -121,6 +125,8 @@ export const DATA = {
       start: "2025",
       end: "Present",
       abandoned: false,
+      sale: false,
+      askingPrice: undefined,
       description: "Website as a Service - need a website?",
     },
     {
@@ -133,6 +139,8 @@ export const DATA = {
       start: "2025",
       end: "Present",
       abandoned: false,
+      sale: false,
+      askingPrice: undefined,
       description: "Run your fitness business without chaos. Open Source.",
     },
     {
@@ -145,6 +153,8 @@ export const DATA = {
       start: "2025",
       end: "Present",
       abandoned: false,
+      sale: true,
+      askingPrice: "$1,000",
       description: "A free link in bio for founders.",
     },
     {
@@ -157,6 +167,8 @@ export const DATA = {
       start: "2022",
       end: "Present",
       abandoned: false,
+      sale: false,
+      askingPrice: undefined,
       description: "Defend your health, smarter.",
     },
     {
@@ -169,6 +181,8 @@ export const DATA = {
       start: "2021",
       end: "Present",
       abandoned: false,
+      sale: false,
+      askingPrice: undefined,
       description: "Managing operations and business development.",
     },
     {
@@ -181,6 +195,8 @@ export const DATA = {
       start: "2024",
       end: "2025",
       abandoned: true,
+      sale: true,
+      askingPrice: "$500",
       description: "A free link in bio for founders.",
     },
     {
@@ -193,6 +209,8 @@ export const DATA = {
       start: "2024",
       end: "2025",
       abandoned: true,
+      sale: false,
+      askingPrice: undefined,
       description: "A map of all the subscriptions you have.",
     },
     {
@@ -205,6 +223,8 @@ export const DATA = {
       start: "2024",
       end: "2025",
       abandoned: true,
+      sale: false,
+      askingPrice: undefined,
       description: "NextJS Boilerplate to ship app faster.",
     },
     {
@@ -217,6 +237,8 @@ export const DATA = {
       start: "2023",
       end: "2024",
       abandoned: true,
+      sale: false,
+      askingPrice: undefined,
       description: "Indie Hacker's Toolkit",
     },
   ],

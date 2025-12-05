@@ -3,14 +3,21 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
+  IconCash,
   IconLink,
   IconToggleLeftFilled,
   IconToggleRightFilled,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
-import { ChevronRightIcon, ExternalLinkIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -24,6 +31,7 @@ interface ResumeCardProps {
   period: string;
   description?: string;
   abandoned?: boolean;
+  sale?: boolean;
 }
 export const ResumeCard = ({
   logoUrl,
@@ -35,6 +43,7 @@ export const ResumeCard = ({
   period,
   description,
   abandoned,
+  sale,
 }: ResumeCardProps) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
@@ -91,27 +100,50 @@ export const ResumeCard = ({
               </h3>
             </Link>
             <div className="flex items-center gap-2 justify-end">
-              <div className="text-xs sm:text-sm tabular-nums text-muted-foreground">
-                <Badge
-                  className={`text-xs px-2 py-0.5 font-museo ${
-                    abandoned
-                      ? "bg-background text-secondary border border-secondary hover:bg-secondary hover:text-secondary-foreground"
-                      : "bg-background text-emerald-600 border border-emerald-600 hover:bg-emerald-600 hover:text-white"
-                  }`}
-                >
-                  {abandoned ? (
-                    <span className="flex items-center gap-1">
-                      <IconToggleLeftFilled className="size-4" />
-                      Shut Down
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1">
-                      <IconToggleRightFilled className="size-4" />
-                      Live
-                    </span>
-                  )}
-                </Badge>
-              </div>
+              {sale ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href={`/startups/${title
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}`}
+                        className="text-xs sm:text-sm tabular-nums"
+                      >
+                        <Badge className="text-xs px-2 py-0.5 font-museo bg-background text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white cursor-pointer flex items-center gap-1">
+                          <IconCash className="size-4" />
+                          For Sale
+                        </Badge>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Click to view deal details</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                <div className="text-xs sm:text-sm tabular-nums text-muted-foreground">
+                  <Badge
+                    className={`text-xs px-2 py-0.5 font-museo ${
+                      abandoned
+                        ? "bg-background text-secondary border border-secondary hover:bg-secondary hover:text-secondary-foreground"
+                        : "bg-background text-emerald-600 border border-emerald-600 hover:bg-emerald-600 hover:text-white"
+                    }`}
+                  >
+                    {abandoned ? (
+                      <span className="flex items-center gap-1">
+                        <IconToggleLeftFilled className="size-4" />
+                        Shut Down
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1">
+                        <IconToggleRightFilled className="size-4" />
+                        Live
+                      </span>
+                    )}
+                  </Badge>
+                </div>
+              )}
               {href && (
                 <Link
                   href={href}

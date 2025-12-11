@@ -5,6 +5,7 @@ import { Startups } from "@/components/sections/startups";
 import { Education } from "@/components/sections/education";
 import { Contact } from "@/components/sections/contact";
 import { Documenting } from "@/components/sections/documenting";
+import { ContributionSection } from "@/components/github-contribution/contribution-section";
 
 export default async function Page() {
   return (
@@ -12,6 +13,7 @@ export default async function Page() {
       <Hero />
 
       <Startups />
+      <ContributionSection />
       <Documenting />
 
       <About />

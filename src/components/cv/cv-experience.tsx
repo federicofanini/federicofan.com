@@ -20,12 +20,12 @@ const experiences = [
   },
   {
     title: "Founder",
-    company: "Uara.ai (Video Script Editor)",
+    company: "Uara.ai (Search Engine for Health Data)",
     period: "2025 - now",
-    description: "Video script editor for content creators. Under development.",
+    description: "Search engine for your health data. Under development.",
     highlights: [
       "Built a full SaaS stack: Next.js, Supabase, Redis, Stripe, App Router",
-      "Designed ai agents for video script editor, shot list generation, and more",
+      "Designed ai agents for search engine, shot list generation, and more",
     ],
   },
   {

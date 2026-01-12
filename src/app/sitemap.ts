@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 import { DATA } from "@/data/resume";
-import { getBlogPosts } from "@/data/blog";
+import { getBlogPosts, getJourneyPosts } from "@/data/blog";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = DATA.url;
@@ -29,5 +29,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
-  return [...routes, ...notesRoutes];
+  // Add journey posts dynamically
+  const journeyPosts = await getJourneyPosts();
+  const journeyRoutes = journeyPosts.map((post) => ({
+    url: `${baseUrl}/journey/${post.slug}`,
+    lastModified: new Date(post.metadata.publishedAt),
+    changeFrequency: "daily" as const,
+    priority: 0.9,
+  }));
+
+  return [...routes, ...notesRoutes, ...journeyRoutes];
 }

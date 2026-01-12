@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { MDXYouTube } from "./mdx-youtube";
 
 function Table({ data }: { data: { headers: string[]; rows: string[][] } }) {
   let headers = data.headers.map((header, index) => (
@@ -89,5 +88,4 @@ export const globalComponents = {
   Image: RoundedImage,
   a: CustomLink,
   Table,
-  YouTube: MDXYouTube,
 };

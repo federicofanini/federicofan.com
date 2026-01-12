@@ -122,7 +122,9 @@ https://www.youtube.com/embed/dQw4w9WgXcQ
 
 ## 🛠️ Technical Details
 
-### Component Features
+### Technical Implementation
+
+YouTube embeds are processed using a custom rehype plugin during MDX compilation:
 
 - ✅ Responsive 16:9 aspect ratio
 - ✅ Automatic video ID extraction from URLs
@@ -131,16 +133,25 @@ https://www.youtube.com/embed/dQw4w9WgXcQ
 - ✅ Proper iframe permissions
 - ✅ Full-screen support
 - ✅ Accessibility attributes
+- ✅ Works alongside tables and code highlighting
 
 ### Styling
 
-The component automatically applies:
+The embed automatically applies:
 
 - Rounded borders (`rounded-xl`)
 - Subtle border (`border-border/50`)
 - Background overlay (`bg-background/50`)
 - Soft shadow (`shadow-sm`)
 - 8px vertical margin (`my-8`)
+
+### How It Works
+
+The `<YouTube>` tag is converted to an iframe during MDX processing by a custom rehype plugin (`src/lib/rehype-youtube.ts`). This approach:
+
+- Preserves all markdown features (tables, code highlighting, etc.)
+- Generates static HTML for better performance
+- No client-side JavaScript needed for the embed itself
 
 ### Browser Support
 
@@ -319,7 +330,20 @@ The YouTube embed is fully responsive:
 
 - [MDX Content Guide](./README.md)
 - [Journey Route Documentation](./JOURNEY_SETUP.md)
-- [Component Reference](../src/components/mdx-youtube.tsx)
+- [Rehype Plugin](../src/lib/rehype-youtube.ts) - Technical implementation
+
+## 🏗️ Technical Architecture
+
+The YouTube embed system uses:
+
+1. **Markdown Parsing**: `remark-parse` + `remark-gfm`
+2. **MDX to HAST**: `remark-rehype` with `allowDangerousHtml`
+3. **Raw HTML Processing**: `rehype-raw` to handle HTML tags
+4. **Custom Plugin**: `rehype-youtube` converts `<YouTube>` to iframe
+5. **Syntax Highlighting**: `rehype-pretty-code` for code blocks
+6. **HTML Generation**: `rehype-stringify`
+
+This pipeline ensures all markdown features work together seamlessly.
 
 ---
 

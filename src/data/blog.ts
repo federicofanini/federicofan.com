@@ -3,10 +3,12 @@ import matter from "gray-matter";
 import path from "path";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
+import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
+import { rehypeYouTube } from "@/lib/rehype-youtube";
 
 type Metadata = {
   title: string;
@@ -29,7 +31,9 @@ function getProcessor() {
     cachedProcessor = unified()
       .use(remarkParse)
       .use(remarkGfm)
-      .use(remarkRehype)
+      .use(remarkRehype, { allowDangerousHtml: true })
+      .use(rehypeRaw)
+      .use(rehypeYouTube)
       .use(rehypePrettyCode, {
         // https://rehype-pretty.pages.dev/#usage
         theme: {
@@ -38,7 +42,7 @@ function getProcessor() {
         },
         keepBackground: false,
       })
-      .use(rehypeStringify);
+      .use(rehypeStringify, { allowDangerousHtml: true });
   }
   return cachedProcessor;
 }

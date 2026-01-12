@@ -8,6 +8,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { IconCalendar } from "@tabler/icons-react";
+import { SocialsFooter } from "@/components/sections/socials-footer";
+import { SOCIALS_CONTENT } from "@/data/socials-content";
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
@@ -139,6 +141,12 @@ export default async function Note({
       <p className="text-sm text-muted-foreground font-museo mt-4">
         Federico Fan
       </p>
+
+      {/* Socials Footer CTA */}
+      <SocialsFooter
+        youtubeVideos={SOCIALS_CONTENT.youtubeVideos}
+        tweets={SOCIALS_CONTENT.tweets}
+      />
     </main>
   );
 }

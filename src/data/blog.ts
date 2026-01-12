@@ -15,6 +15,8 @@ type Metadata = {
   image?: string;
 };
 
+export type ContentType = "notes" | "journey";
+
 function getMDXFiles(dir: string) {
   return fs.readdirSync(dir).filter((file) => path.extname(file) === ".mdx");
 }
@@ -46,8 +48,8 @@ export async function markdownToHTML(markdown: string) {
   return p.toString();
 }
 
-export async function getPost(slug: string) {
-  const filePath = path.join("content", `${slug}.mdx`);
+export async function getPost(slug: string, type: ContentType = "notes") {
+  const filePath = path.join("content", type, `${slug}.mdx`);
   let source = fs.readFileSync(filePath, "utf-8");
   const { content: rawContent, data: metadata } = matter(source);
   const content = await markdownToHTML(rawContent);
@@ -58,12 +60,12 @@ export async function getPost(slug: string) {
   };
 }
 
-async function getAllPosts(dir: string) {
+async function getAllPosts(dir: string, type: ContentType) {
   let mdxFiles = getMDXFiles(dir);
   return Promise.all(
     mdxFiles.map(async (file) => {
       let slug = path.basename(file, path.extname(file));
-      let { metadata, source } = await getPost(slug);
+      let { metadata, source } = await getPost(slug, type);
       return {
         metadata,
         slug,
@@ -74,5 +76,9 @@ async function getAllPosts(dir: string) {
 }
 
 export async function getBlogPosts() {
-  return getAllPosts(path.join(process.cwd(), "content"));
+  return getAllPosts(path.join(process.cwd(), "content", "notes"), "notes");
+}
+
+export async function getJourneyPosts() {
+  return getAllPosts(path.join(process.cwd(), "content", "journey"), "journey");
 }

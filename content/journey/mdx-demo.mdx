@@ -1,0 +1,262 @@
+---
+title: "MDX Demo: All Features Showcase"
+publishedAt: "2025-01-12"
+summary: "A comprehensive demo article showcasing all available MDX features, components, and formatting options."
+image: "/startup/uara.png"
+---
+
+### Welcome to the MDX Demo
+
+This article demonstrates **all available MDX features** you can use in your journey articles. From basic markdown to custom components, this is your complete reference.
+
+---
+
+## Text Formatting
+
+You can use _italic text_, **bold text**, **_bold italic_**, and even ~~strikethrough~~.
+
+### Lists
+
+**Unordered lists:**
+
+- First item
+- Second item
+  - Nested item
+  - Another nested item
+- Third item
+
+**Ordered lists:**
+
+1. First step
+2. Second step
+3. Third step
+   1. Sub-step one
+   2. Sub-step two
+
+**Task lists:**
+
+- [x] Completed task
+- [x] Another completed task
+- [ ] Pending task
+- [ ] Future task
+
+---
+
+## Blockquotes
+
+> "The best time to plant a tree was 20 years ago. The second best time is now."
+
+> **Pro tip:** You can nest blockquotes and use formatting inside them.
+>
+> This is a multi-line blockquote that demonstrates how you can structure longer quoted content.
+
+---
+
+## Code Blocks
+
+Inline code looks like this: `const greeting = "Hello, World!";`
+
+**JavaScript example:**
+
+```javascript
+function fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+console.log(fibonacci(10)); // Output: 55
+```
+
+**TypeScript example:**
+
+```typescript
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const createUser = (data: User): User => {
+  return {
+    ...data,
+    id: generateId(),
+  };
+};
+```
+
+**Python example:**
+
+```python
+def quick_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+```
+
+---
+
+## YouTube Embed
+
+Here's how you embed a YouTube video using the custom component:
+
+<YouTube id="XifgHi9R5Rc" title="Demo Video" />
+
+You can use either the video ID or the full URL - both work perfectly!
+
+---
+
+## Links
+
+**Internal link:** Check out my [notes](/notes) for quick thoughts.
+
+**External link:** Follow me on [X (Twitter)](https://twitter.com/fedef_an) for daily updates.
+
+**Link with title:** Visit [my GitHub](https://github.com) for open source projects.
+
+---
+
+## Images
+
+Images are automatically optimized with Next.js:
+
+![Startup Demo](/startup/uara.png)
+
+You can also reference images from the public folder.
+
+---
+
+## Tables
+
+Here's a comparison table:
+
+| Feature | Free Plan | Pro Plan | Enterprise |
+| ------- | --------- | -------- | ---------- |
+| Users   | 1         | 10       | Unlimited  |
+| Storage | 1GB       | 100GB    | Custom     |
+| Support | Email     | Priority | Dedicated  |
+| Price   | $0/mo     | $29/mo   | Custom     |
+
+---
+
+## Horizontal Rules
+
+Use three dashes for a horizontal rule (as seen throughout this article):
+
+---
+
+That was a horizontal rule!
+
+---
+
+## Headings
+
+# Heading 1
+
+## Heading 2
+
+### Heading 3
+
+#### Heading 4
+
+##### Heading 5
+
+###### Heading 6
+
+---
+
+## Nested Content
+
+You can combine multiple elements:
+
+> **Quote with a list:**
+>
+> 1. First important point
+> 2. Second important point
+> 3. Third important point
+
+**List with code:**
+
+- Install dependencies: `npm install`
+- Run development server: `npm run dev`
+- Build for production: `npm run build`
+
+---
+
+## Special Characters & Emojis
+
+MDX supports emojis and special characters:
+
+🚀 Rocket • ✅ Check mark • 💡 Light bulb • 🔥 Fire • ⚡ Lightning
+
+---
+
+## Complex Example
+
+Let's combine multiple features:
+
+### Building a Startup in 2025
+
+**The three pillars:**
+
+1. **Product** 🏗️
+
+   - Focus on solving real problems
+   - Ship fast, iterate faster
+   - Listen to user feedback
+
+2. **Distribution** 📢
+
+   - Build in public
+   - Content is king
+   - Community over audience
+
+3. **Monetization** 💰
+   - Start charging early
+   - Value-based pricing
+   - Multiple revenue streams
+
+> "Don't worry about competition. Worry about creating value."
+
+Here's a simple validation framework:
+
+```typescript
+const validateIdea = {
+  problem: "Is it a real pain point?",
+  solution: "Does your product solve it?",
+  market: "Are people willing to pay?",
+  timing: "Is now the right time?",
+};
+```
+
+**Results matrix:**
+
+| Stage    | Action              | Metric        | Goal     |
+| -------- | ------------------- | ------------- | -------- |
+| Week 1-2 | Customer interviews | Conversations | 20+      |
+| Week 3-4 | Build MVP           | Features      | 3-5 core |
+| Week 5-6 | Launch              | Users         | 100+     |
+| Week 7-8 | Iterate             | Retention     | 40%+     |
+
+---
+
+## Conclusion
+
+This demo showcases all the powerful features available in your journey articles:
+
+✅ Rich text formatting  
+✅ Code syntax highlighting  
+✅ YouTube embeds  
+✅ Tables and lists  
+✅ Images and links  
+✅ Blockquotes  
+✅ And much more!
+
+Use this as a reference when creating your own content. Happy writing! 🎉
+
+---
+
+_For more examples and documentation, check the content/README.md file._

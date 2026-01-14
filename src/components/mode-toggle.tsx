@@ -11,7 +11,7 @@ export function ModeToggle() {
     <button
       type="button"
       className={cn(
-        "inline-flex items-center justify-center size-8 rounded-lg border bg-card transition-all duration-300",
+        "inline-flex items-center justify-center size-8 rounded-lg bg-card transition-all duration-300",
         "hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 hover:-translate-y-0.5",
         "active:scale-95"
       )}

@@ -15,12 +15,12 @@ export function Hero() {
                 <FaceScanIllustration />
               </div>
               <div className="flex flex-col gap-2">
-                <h1 className="text-balance text-lg text-justify font-museo">
+                <h1 className="text-balance text-lg text-justify">
                   I&apos;m building{" "}
                   <Link
                     href="https://uara.ai"
                     target="_blank"
-                    className="inline underline underline-offset-4 hover:text-primary transition-colors text-secondary font-semibold"
+                    className="font-museo inline underline underline-offset-4 hover:text-primary transition-colors text-secondary font-semibold"
                   >
                     Uara
                     <IconCirclesRelation className="size-4 inline-block ml-0.5" />

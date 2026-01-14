@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { TextScramble } from "../../../components/motion-primitives/text-scramble";
+import { TextScramble } from "../motion-primitives/text-scramble";
 import { cn } from "@/lib/utils";
 import { Particles } from "../ui/particles";
 import Image from "next/image";
@@ -57,7 +57,7 @@ export const FaceScanIllustration = () => {
         }}
       />
 
-      <div className="absolute inset-0 animate-spin opacity-30 blur-2xl duration-[3s] dark:opacity-20">
+      <div className="absolute inset-0 animate-spin opacity-30 blur-2xl dark:opacity-20">
         <div className="bg-linear-to-r/increasing animate-hue-rotate absolute inset-0 rounded-full from-pink-300 to-indigo-300" />
       </div>
       <div className="animate-scan absolute inset-x-12 inset-y-0 z-10">

@@ -2,6 +2,7 @@ import { FaceScanIllustration } from "../illustrations/face-scan";
 import Link from "next/link";
 import { IconCirclesRelation } from "@tabler/icons-react";
 import { Separator } from "../ui/separator";
+import { SocialsShowcase } from "./socials-showcase";
 
 export function Hero() {
   return (
@@ -51,9 +52,15 @@ export function Hero() {
                       </span>
                     </li>
                   </ul>
+                  <p className="text-muted-foreground text-sm tracking-widest">
+                    This is a record of building something{" "}
+                    <span className="font-semibold text-primary">real</span>,
+                    from the beginning.
+                  </p>
                 </div>
               </div>
             </div>
+            <SocialsShowcase />
           </div>
         </div>
       </div>

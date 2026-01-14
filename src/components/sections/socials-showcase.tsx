@@ -139,11 +139,11 @@ export function SocialsShowcase({
   const videoId = getYouTubeVideoId(youtubeVideoId);
 
   return (
-    <section id="socials-showcase">
+    <section id="socials-showcase" className="pt-8">
       <div className="space-y-6 w-full max-w-4xl mx-auto">
         <BlurFade delay={BLUR_FADE_DELAY} className="flex flex-col gap-3">
-          <h3 className="text-lg font-bold font-mono">
-            Documenting my journey on:
+          <h3 className="text-md uppercase text-muted-foreground font-mono">
+            Follow on:
           </h3>
           <SocialsSmall />
         </BlurFade>

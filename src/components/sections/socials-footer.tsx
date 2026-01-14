@@ -284,13 +284,6 @@ export function SocialsFooter({
             )}
           </div>
         )}
-
-        {/* Footer CTA */}
-        <div className="text-center pt-4">
-          <p className="text-xs text-muted-foreground font-mono">
-            Building in public • Sharing the journey • Let&apos;s connect 🚀
-          </p>
-        </div>
       </div>
 
       {/* Twitter widget script */}

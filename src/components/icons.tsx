@@ -8,6 +8,7 @@ import {
   IconBrandThreads,
   IconBrandBehance,
   IconMail,
+  IconMailFast,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +45,12 @@ export const Icons = {
   ),
   threads: ({ className, ...props }: IconProps) => (
     <IconBrandThreads
+      {...props}
+      className={cn("text-black dark:text-white", className)}
+    />
+  ),
+  newsletter: ({ className, ...props }: IconProps) => (
+    <IconMailFast
       {...props}
       className={cn("text-black dark:text-white", className)}
     />

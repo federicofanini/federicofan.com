@@ -10,6 +10,7 @@ import { ChevronRight } from "lucide-react";
 
 const BLUR_FADE_DELAY = 0.0;
 const REFRESH_INTERVAL = 60 * 60 * 1000; // 1 hour in milliseconds
+const SHOW_FOLLOWER_COUNTS = false; // Set to false to disable follower counts and API calls
 
 // Format number with shorter format for mobile
 const formatCount = (count: number): string => {
@@ -39,6 +40,8 @@ export function SocialsSmall() {
 
   // Fetch X follower count
   useEffect(() => {
+    if (!SHOW_FOLLOWER_COUNTS) return;
+
     let isMounted = true;
     let intervalId: NodeJS.Timeout | null = null;
 
@@ -80,6 +83,8 @@ export function SocialsSmall() {
 
   // Fetch YouTube subscriber count
   useEffect(() => {
+    if (!SHOW_FOLLOWER_COUNTS) return;
+
     const fetchSubscribers = async () => {
       try {
         const response = await fetch(
@@ -104,6 +109,7 @@ export function SocialsSmall() {
 
   // Get count for a social platform
   const getSocialCount = (socialName: string): number | null => {
+    if (!SHOW_FOLLOWER_COUNTS) return null;
     if (socialName === "X") return xFollowerCount;
     if (socialName === "YouTube")
       return ytFollowerCount > 0 ? ytFollowerCount : null;
@@ -117,12 +123,40 @@ export function SocialsSmall() {
     return "";
   };
 
+  // Define colors for each social platform - subtle ink colors
+  const getAccentColor = (socialName: string) => {
+    const colors = {
+      X: "border-l-blue-400/40",
+      GitHub: "border-l-purple-400/40",
+      YouTube: "border-l-rose-400/40",
+      LinkedIn: "border-l-cyan-400/40",
+    };
+    return colors[socialName as keyof typeof colors] || "border-l-secondary/40";
+  };
+
+  const getIconColor = (socialName: string) => {
+    const colors = {
+      X: "text-blue-600 dark:text-blue-400",
+      GitHub: "text-purple-600 dark:text-purple-400",
+      YouTube: "text-rose-600 dark:text-rose-400",
+      LinkedIn: "text-cyan-600 dark:text-cyan-400",
+    };
+    return colors[socialName as keyof typeof colors] || "text-secondary";
+  };
+
+  // Slight rotation for handmade feel
+  const rotations = [
+    "rotate-[-0.5deg]",
+    "rotate-[0.5deg]",
+    "rotate-[-0.3deg]",
+    "rotate-[0.3deg]",
+  ];
+
   return (
     <section id="socials">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {socials.map((social, index) => {
           const count = getSocialCount(social.name);
-          const countLabel = getCountLabel(social.name);
 
           return (
             <BlurFade
@@ -134,32 +168,49 @@ export function SocialsSmall() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={cn(
-                  "group flex items-center justify-between p-4 rounded-xl border bg-card text-card-foreground transition-all duration-300",
-                  "hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-800/50 hover:-translate-y-0.5",
-                  "h-full"
+                  "group relative block p-4 rounded-sm border border-border/60 bg-background transition-all duration-300",
+                  "hover:border-foreground/20 hover:shadow-sm hover:-translate-y-0.5",
+                  "border-l-2",
+                  getAccentColor(social.name),
+                  rotations[index % rotations.length]
                 )}
                 aria-label={social.name}
               >
-                <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg border bg-background">
-                    <social.icon className="size-5 transition-transform group-hover:scale-110" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-semibold font-geist leading-none mb-1">
+                <div className="flex items-start justify-between">
+                  {/* Left: icon and name */}
+                  <div className="flex items-center gap-2">
+                    <social.icon
+                      className={cn(
+                        "size-5 stroke-[1.5]",
+                        getIconColor(social.name)
+                      )}
+                    />
+                    <span className="font-mono text-sm font-medium tracking-tight">
                       {social.name}
                     </span>
-                    {count !== null ? (
-                      <span className="text-xs text-muted-foreground font-mono">
-                        {formatCount(count)} {countLabel}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">
-                        Follow
-                      </span>
-                    )}
                   </div>
+
+                  {/* Right: count */}
+                  {SHOW_FOLLOWER_COUNTS && count !== null && (
+                    <div className="flex flex-col items-end">
+                      <span className="text-lg font-mono font-semibold tabular-nums leading-none">
+                        {formatCount(count)}
+                      </span>
+                      <span className="text-[9px] text-muted-foreground/60 font-mono mt-0.5">
+                        {social.name === "X"
+                          ? "followers"
+                          : social.name === "YouTube"
+                          ? "subs"
+                          : ""}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <ChevronRight className="size-4 text-muted-foreground/50 group-hover:text-foreground group-hover:translate-x-0.5 transition-all duration-300" />
+
+                {/* Subtle hover indicator */}
+                <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ChevronRight className="size-3 text-muted-foreground/50" />
+                </div>
               </Link>
             </BlurFade>
           );

@@ -67,11 +67,10 @@ export const DATA = {
         navbar: true,
       },
 
-      //Beehiiv: {
-      //  name: "Beehiiv",
-      //  url: "https://dub.sh/fedef",
-      //  icon: Icons.beehiiv,
-
+      //Newsletter: {
+      //  name: "Newsletter",
+      //  url: "https://federicofan.substack.com",
+      //  icon: Icons.newsletter,
       //  navbar: true,
       //},
 

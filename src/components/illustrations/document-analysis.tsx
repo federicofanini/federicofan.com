@@ -1,10 +1,17 @@
 import { cn } from "@/lib/utils";
 
-export const DocumentAnalysisIllustration = () => {
+export const DocumentAnalysisIllustration = ({
+  className,
+}: {
+  className?: string;
+}) => {
   return (
     <div
       aria-hidden
-      className="bg-foreground/3 relative isolate rounded border p-2 mx-auto"
+      className={cn(
+        "bg-foreground/3 relative isolate rounded border p-2 mx-auto",
+        className
+      )}
     >
       <CardDecorator className="opacity-50" />
       <div className="animate-scan absolute inset-x-4 inset-y-6 z-10 mix-blend-color">

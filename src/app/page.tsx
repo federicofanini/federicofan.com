@@ -15,8 +15,6 @@ export default async function Page() {
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       <Hero />
       <HealthEngineSection />
-      <FingerPrintSection />
-      <DocumentAnalysisIllustration />
 
       <Startups />
       <ContributionSection />

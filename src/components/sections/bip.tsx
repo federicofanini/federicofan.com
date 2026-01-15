@@ -1,6 +1,7 @@
 import { Highlighter } from "@/components/ui/highlighter";
 import Link from "next/link";
 import { IconNotebook, IconCaretRightFilled } from "@tabler/icons-react";
+import { YoutubeCarousel } from "./youtube-carousel";
 
 export function BuildInPublicSection() {
   return (
@@ -28,6 +29,8 @@ export function BuildInPublicSection() {
               </p>
             </div>
           </div>
+
+          <YoutubeCarousel />
         </div>
 
         {/* Principles Grid 

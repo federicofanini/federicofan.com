@@ -28,31 +28,12 @@ export function CursorStatsSection() {
   const [cursorStats, setCursorStats] = useState<CursorStatsData>(CURSOR_STATS);
   const [githubStats, setGithubStats] = useState<GitHubStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [useCursorAPI, setUseCursorAPI] = useState(false);
 
   useEffect(() => {
     async function fetchStats() {
       try {
-        // Fetch both Cursor and GitHub stats in parallel
-        const [cursorRes, githubRes] = await Promise.all([
-          fetch("/api/cursor/stats").catch(() => null),
-          fetch("/api/github/stats").catch(() => null),
-        ]);
-
-        // Handle Cursor API response
-        if (cursorRes && cursorRes.ok) {
-          const cursorData = await cursorRes.json();
-          if (cursorData.success && cursorData.usageSummary) {
-            setUseCursorAPI(true);
-            // Transform Cursor API data to match our interface
-            // Note: Actual data structure depends on Cursor's API response
-            // Update this based on actual API response format
-            console.log("Cursor API data:", cursorData);
-
-            // Keep using fallback data for now, but you can update this
-            // when you have access to real Cursor API data
-          }
-        }
+        // Fetch GitHub stats
+        const githubRes = await fetch("/api/github/stats").catch(() => null);
 
         // Handle GitHub API response
         if (githubRes && githubRes.ok) {
@@ -271,7 +252,8 @@ export function CursorStatsSection() {
             <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse mt-2" />
             <p className="text-sm text-muted-foreground flex-1">
               <span className="text-foreground font-semibold">Live stats:</span>{" "}
-              Updated every hour from GitHub.
+              GitHub contributions updated hourly. Cursor stats using fallback
+              data until API key is configured.
             </p>
           </div>
         </BlurFade>

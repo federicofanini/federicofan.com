@@ -69,7 +69,11 @@ export default function WritingsList({ allPosts, allTags }: WritingsListProps) {
     return dateB - dateA; // Newest first
   });
 
-  const availableTags: Tag[] = ["all", "notes", "journey", ...allTags];
+  // Filter out "notes" and "journey" from allTags to avoid duplicates
+  const customTags = allTags.filter(
+    (tag) => tag !== "notes" && tag !== "journey"
+  );
+  const availableTags: Tag[] = ["all", "notes", "journey", ...customTags];
 
   return (
     <div className="flex flex-col space-y-10">
@@ -80,7 +84,7 @@ export default function WritingsList({ allPosts, allTags }: WritingsListProps) {
               All Writings
             </h1>
             <p className="text-muted-foreground text-balance text-lg text-justify">
-              Notes, journey entries, and thoughts—documented as they happen.
+              My notes and thoughts about my startup life.
             </p>
           </BlurFade>
 

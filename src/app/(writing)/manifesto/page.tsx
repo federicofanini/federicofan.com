@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { manifestoComponents } from "./_components/manifesto-mdx";
+import { ManifestoNav } from "./_components/manifesto-nav";
 
 export async function generateMetadata(): Promise<Metadata | undefined> {
   const page = getRawPageContent("manifesto");
@@ -141,6 +142,9 @@ export default async function ManifestoPage() {
           </p>
         </footer>
       </div>
+
+      {/* Floating Navigation */}
+      <ManifestoNav />
     </>
   );
 }

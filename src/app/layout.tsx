@@ -84,7 +84,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light">
           <TooltipProvider delayDuration={0}>
             <NuqsAdapter>
-              <Header showSocials={false} />
+              <Header showSocials={false} showThemeToggle={false} />
               {children}
               <Footer />
             </NuqsAdapter>

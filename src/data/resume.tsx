@@ -23,8 +23,8 @@ export const DATA = {
   ],
   navbar: [
     { href: "/manifesto", icon: Book, label: "manifesto" },
-    { href: "/feedback", icon: Code2, label: "tips" },
     { href: "/notes", icon: NotebookIcon, label: "notes" },
+    { href: "/feedback", icon: Code2, label: "tips" },
     { href: "/cv", icon: NotebookIcon, label: "cv" },
   ],
   contact: {

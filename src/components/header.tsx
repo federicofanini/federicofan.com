@@ -17,6 +17,7 @@ interface HeaderProps {
   showSearch?: boolean;
   showThemeToggle?: boolean;
   showSocials?: boolean;
+  showUara?: boolean;
 }
 
 export function Header({
@@ -26,6 +27,7 @@ export function Header({
   showSearch = false,
   showThemeToggle = true,
   showSocials = true,
+  showUara = true,
 }: HeaderProps) {
   const pathname = usePathname();
 
@@ -116,6 +118,25 @@ export function Header({
                       <span className="sr-only">{social.name}</span>
                     </Link>
                   ))}
+              </div>
+            </>
+          )}
+
+          {/* Uara */}
+          {showUara && (
+            <>
+              <div className="flex items-center gap-2">
+                <Link
+                  key="uara"
+                  href="https://uara.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center size-6 rounded-md border border-border/50 bg-background transition-colors hover:opacity-80"
+                  aria-label="Uara"
+                >
+                  <Image src="/uaraai.svg" alt="Uara" width={24} height={24} />
+                  <span className="sr-only">Uara</span>
+                </Link>
               </div>
             </>
           )}

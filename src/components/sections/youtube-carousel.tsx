@@ -1,8 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconBrandYoutube,
+  IconBrandYoutubeFilled,
+} from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface Video {
   id: string;
@@ -112,6 +118,19 @@ export function YoutubeCarousel() {
             <span className="text-xs text-muted-foreground font-mono">
               {currentIndex + 1} / {VIDEOS.length}
             </span>
+          </div>
+
+          {/* Subscribe Button */}
+          <div className="flex justify-center mt-6">
+            <Link
+              href="https://youtube.com/@federicofanini?sub_confirmation=1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2.5 px-6 py-3 bg-[#FF0000] hover:bg-[#CC0000] text-white rounded-full font-semibold text-sm transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-red-500/25"
+            >
+              <IconBrandYoutubeFilled className="h-5 w-5 " />
+              <span>Subscribe to my channel</span>
+            </Link>
           </div>
         </div>
       </div>

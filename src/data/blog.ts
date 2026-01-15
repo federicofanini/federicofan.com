@@ -15,9 +15,17 @@ type Metadata = {
   publishedAt: string;
   summary: string;
   image?: string;
+  tags?: string[];
 };
 
 export type ContentType = "notes" | "journey";
+
+export type PostWithType = {
+  metadata: Metadata;
+  slug: string;
+  source: string;
+  type: ContentType;
+};
 
 function getMDXFiles(dir: string) {
   return fs.readdirSync(dir).filter((file) => path.extname(file) === ".mdx");
@@ -64,14 +72,23 @@ export async function getPost(slug: string, type: ContentType = "notes") {
   };
 }
 
-async function getAllPosts(dir: string, type: ContentType) {
+async function getAllPosts(
+  dir: string,
+  type: ContentType
+): Promise<
+  {
+    metadata: Metadata;
+    slug: string;
+    source: string;
+  }[]
+> {
   let mdxFiles = getMDXFiles(dir);
   return Promise.all(
     mdxFiles.map(async (file) => {
       let slug = path.basename(file, path.extname(file));
       let { metadata, source } = await getPost(slug, type);
       return {
-        metadata,
+        metadata: metadata as Metadata,
         slug,
         source,
       };
@@ -85,4 +102,45 @@ export async function getBlogPosts() {
 
 export async function getJourneyPosts() {
   return getAllPosts(path.join(process.cwd(), "content", "journey"), "journey");
+}
+
+// Aggregate all writings from both notes and journey
+export async function getAllWritings(): Promise<PostWithType[]> {
+  const [notePosts, journeyPosts] = await Promise.all([
+    getBlogPosts(),
+    getJourneyPosts(),
+  ]);
+
+  const notesWithType: PostWithType[] = notePosts.map((post) => ({
+    ...post,
+    type: "notes" as ContentType,
+  }));
+
+  const journeyWithType: PostWithType[] = journeyPosts.map((post) => ({
+    ...post,
+    type: "journey" as ContentType,
+  }));
+
+  const allPosts = [...notesWithType, ...journeyWithType];
+
+  // Sort by date: most recent first (descending order)
+  return allPosts.sort((a, b) => {
+    const dateA = new Date(a.metadata.publishedAt).getTime();
+    const dateB = new Date(b.metadata.publishedAt).getTime();
+    return dateB - dateA; // Newest first
+  });
+}
+
+// Get all unique tags from all writings
+export async function getAllTags(): Promise<string[]> {
+  const allPosts = await getAllWritings();
+  const tagsSet = new Set<string>();
+
+  allPosts.forEach((post) => {
+    if (post.metadata.tags) {
+      post.metadata.tags.forEach((tag) => tagsSet.add(tag));
+    }
+  });
+
+  return Array.from(tagsSet).sort();
 }

@@ -9,6 +9,7 @@ import { Inter as FontSans, MuseoModerno } from "next/font/google";
 import "./globals.css";
 import { Provider as Analytics } from "@/lib/events/client";
 import { Footer } from "@/components/sections/footer";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -82,9 +83,11 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="light">
           <TooltipProvider delayDuration={0}>
-            <Header showSocials={false} />
-            {children}
-            <Footer />
+            <NuqsAdapter>
+              <Header showSocials={false} />
+              {children}
+              <Footer />
+            </NuqsAdapter>
           </TooltipProvider>
         </ThemeProvider>
         <Analytics />

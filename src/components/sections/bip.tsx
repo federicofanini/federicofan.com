@@ -94,11 +94,11 @@ export function BuildInPublicSection() {
 
           <div className="mt-12 flex justify-center">
             <Link
-              href="/journey"
+              href="/notes"
               className="group relative inline-flex items-center gap-2 px-6 py-3 border border-border rounded-lg text-base transition-all duration-200 hover:border-foreground/40 hover:bg-muted/30"
             >
               <span className="relative">
-                Read the journey
+                Read the writings
                 <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-foreground transition-all duration-300 group-hover:w-full" />
               </span>
               <IconCaretRightFilled className="size-4 opacity-60 transition-all group-hover:opacity-100 group-hover:translate-x-0.5" />

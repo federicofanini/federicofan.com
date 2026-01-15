@@ -1,8 +1,4 @@
-"use client";
-
 import BlurFade from "../magicui/blur-fade";
-import Image from "next/image";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "../ui/separator";
 
 const BLUR_FADE_DELAY = 0.0;

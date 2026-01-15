@@ -131,7 +131,7 @@ export default function WritingsList({ allPosts, allTags }: WritingsListProps) {
                 key={`${post.slug}-${post.type}`}
               >
                 <Link
-                  href={`/${post.type}/${post.slug}`}
+                  href={`/notes/${post.slug}`}
                   className={`group relative pl-6 border-l-2 ${colors.border} ${colors.borderHover} transition-colors block`}
                 >
                   <div

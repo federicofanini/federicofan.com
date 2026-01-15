@@ -15,16 +15,16 @@ export const metadata = {
 export default function NotFound() {
   const suggestions = [
     {
-      title: "Journey",
-      description: "Read about my entrepreneurial path",
-      href: "/journey",
-      icon: IconCompass,
-    },
-    {
-      title: "Notes",
-      description: "Explore my thoughts and learnings",
+      title: "Writings",
+      description: "Read my notes and journey entries",
       href: "/notes",
       icon: IconBook,
+    },
+    {
+      title: "Home",
+      description: "Go back to the homepage",
+      href: "/",
+      icon: IconHome,
     },
   ];
 

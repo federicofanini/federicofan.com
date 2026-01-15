@@ -43,7 +43,7 @@ export function DocumentationHubSection() {
       icon: IconWriting,
       description: "Essays and decision logs",
       subtext: "Higher signal",
-      href: "/journey",
+      href: "/notes",
       color: "rgb(59, 130, 246)", // blue-500
       external: false,
     },

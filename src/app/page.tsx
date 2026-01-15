@@ -4,6 +4,7 @@ import { Contact } from "@/components/sections/contact";
 import { HealthEngineSection } from "@/components/sections/health-engine";
 import { BuildInPublicSection } from "@/components/sections/bip";
 import { CursorStatsSection } from "@/components/sections/cursor-stats";
+import { HomepageFeedback } from "@/components/feedback/homepage-feedback";
 
 export default async function Page() {
   return (
@@ -13,7 +14,7 @@ export default async function Page() {
       <BuildInPublicSection />
       <About />
       <CursorStatsSection />
-
+      <HomepageFeedback />
       <Contact />
     </main>
   );

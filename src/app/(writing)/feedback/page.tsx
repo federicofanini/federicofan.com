@@ -1,7 +1,9 @@
 import BlurFade from "@/components/magicui/blur-fade";
+import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { FeedbackForm } from "@/components/feedback/feedback-form";
 import { FeedbackList } from "@/components/feedback/feedback-list";
 import { getFeedbacks } from "@/data/feedback";
+import { IconMessageCircle } from "@tabler/icons-react";
 
 export const metadata = {
   title: "Feedback",
@@ -14,44 +16,65 @@ export default async function FeedbackPage() {
   const { data: feedbacks } = await getFeedbacks();
 
   return (
-    <main className="flex flex-col min-h-[100dvh] space-y-10 max-w-2xl mx-auto py-12 px-4">
-      <section id="header">
-        <div className="mx-auto w-full max-w-2xl py-10">
-          <div className="group flex flex-col gap-6 items-start">
-            <BlurFade delay={BLUR_FADE_DELAY}>
-              <h1 className="text-4xl font-museo font-semibold tracking-tight sm:text-4xl mb-2">
-                Feedback
-              </h1>
-              <p className="text-muted-foreground text-lg font-medium max-w-2xl">
-                In <span className="text-primary font-bold">26 years</span>{" "}
-                I&apos;ve never documented my life before. Now things have
-                changed.
-                <br />
-                If you have feedback on what I share — the story, the format,
-                the way I tell it. I&apos;d love to hear you.
-                <br />
-                Maybe it&apos;s cringe at the beginning, but I&apos;ll improve
-                based on what you tell me.{" "}
-                <span className="text-primary font-bold">
-                  Your feedback will help me grow and shape this journey.
-                </span>
-              </p>
+    <main className="flex flex-col min-h-[100dvh] space-y-10">
+      <section id="feedback">
+        <div className="mx-auto w-full max-w-2xl py-14">
+          <div className="flex flex-col space-y-8">
+            {/* Header */}
+            <div className="space-y-4">
+              <BlurFade delay={BLUR_FADE_DELAY}>
+                <div className="flex items-center gap-3">
+                  <IconMessageCircle className="size-8 text-primary" />
+                  <h1 className="text-4xl font-museo font-bold tracking-tight">
+                    Feedback
+                  </h1>
+                </div>
+              </BlurFade>
+
+              <BlurFadeText
+                delay={BLUR_FADE_DELAY * 2}
+                className="text-xl text-muted-foreground leading-relaxed"
+                yOffset={8}
+                text="This is new territory for me. I'd love to hear what you think."
+              />
+            </div>
+
+            {/* Description */}
+            <BlurFade delay={BLUR_FADE_DELAY * 3}>
+              <div className="space-y-4 pt-2">
+                <p className="text-muted-foreground leading-relaxed">
+                  In{" "}
+                  <span className="text-foreground font-semibold">
+                    26 years
+                  </span>
+                  , I&apos;ve never documented my journey like this. The story,
+                  the format, the way I tell it — it&apos;s all evolving.
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  Maybe it&apos;s rough around the edges right now, but{" "}
+                  <span className="text-foreground font-semibold">
+                    your feedback will help me improve and shape this journey.
+                  </span>
+                </p>
+              </div>
+            </BlurFade>
+
+            {/* Form */}
+            <BlurFade delay={BLUR_FADE_DELAY * 4}>
+              <div className="pt-4">
+                <FeedbackForm />
+              </div>
+            </BlurFade>
+
+            {/* Feedback List */}
+            <BlurFade delay={BLUR_FADE_DELAY * 5}>
+              <div className="pt-8 border-t space-y-4">
+                <h2 className="text-lg font-semibold">Recent Feedback</h2>
+                <FeedbackList feedbacks={feedbacks || []} />
+              </div>
             </BlurFade>
           </div>
         </div>
-      </section>
-
-      <section id="form">
-        <BlurFade delay={BLUR_FADE_DELAY * 2}>
-          <FeedbackForm />
-        </BlurFade>
-      </section>
-
-      <section id="list">
-        <BlurFade delay={BLUR_FADE_DELAY * 3}>
-          <h2 className="text-xl font-bold mb-4 font-museo">Recent Feedback</h2>
-          <FeedbackList feedbacks={feedbacks || []} />
-        </BlurFade>
       </section>
     </main>
   );

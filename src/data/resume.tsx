@@ -29,7 +29,7 @@ export const DATA = {
     { href: "/cv", icon: NotebookIcon, label: "cv" },
   ],
   contact: {
-    email: "f@fanini.eu",
+    email: "fed@uara.ai",
     tel: "+39",
     social: {
       X: {

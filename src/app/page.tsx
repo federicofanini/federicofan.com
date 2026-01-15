@@ -16,15 +16,8 @@ export default async function Page() {
       <Hero />
       <HealthEngineSection />
       <BuildInPublicSection />
-
-      <Startups />
-      <ContributionSection />
-      <Documenting />
-
       <About />
 
-      <WebsitesBanner />
-      <Education />
       <Contact />
     </main>
   );

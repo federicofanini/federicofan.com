@@ -96,7 +96,7 @@ export function CursorStatsSection() {
       <div className="mx-auto max-w-5xl space-y-8">
         <BlurFade delay={BLUR_FADE_DELAY * 2}>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            This is how much I&apos;m building.
+            This is how much I&apos;m shipping.
           </p>
         </BlurFade>
 

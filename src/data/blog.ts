@@ -144,3 +144,28 @@ export async function getAllTags(): Promise<string[]> {
 
   return Array.from(tagsSet).sort();
 }
+
+// Get standalone page content (like manifesto)
+export async function getPageContent(slug: string) {
+  const filePath = path.join("content", `${slug}.mdx`);
+  let source = fs.readFileSync(filePath, "utf-8");
+  const { content: rawContent, data: metadata } = matter(source);
+  const content = await markdownToHTML(rawContent);
+  return {
+    source: content,
+    metadata,
+    slug,
+  };
+}
+
+// Get raw MDX content for client-side rendering
+export function getRawPageContent(slug: string) {
+  const filePath = path.join("content", `${slug}.mdx`);
+  let source = fs.readFileSync(filePath, "utf-8");
+  const { content: rawContent, data: metadata } = matter(source);
+  return {
+    content: rawContent,
+    metadata,
+    slug,
+  };
+}

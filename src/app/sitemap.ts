@@ -6,14 +6,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = DATA.url;
 
   // Define all your routes here
-  const routes = ["", "/startups", "/feedback", "/notes", "/agency"].map(
-    (route) => ({
-      url: `${baseUrl}${route}`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: route === "" ? 1 : 0.8,
-    })
-  );
+  const routes = ["", "/feedback", "/notes", "/manifesto"].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: "daily" as const,
+    priority: route === "" ? 1 : 0.8,
+  }));
 
   // Add all writings (notes and journey) dynamically - all use /notes/[slug] route
   const posts = await getAllWritings();

@@ -127,6 +127,7 @@ export function SocialsSmall() {
   const getAccentColor = (socialName: string) => {
     const colors = {
       X: "border-l-blue-400/40",
+      Instagram: "border-l-pink-400/40",
       GitHub: "border-l-purple-400/40",
       YouTube: "border-l-rose-400/40",
       LinkedIn: "border-l-cyan-400/40",
@@ -137,6 +138,7 @@ export function SocialsSmall() {
   const getIconColor = (socialName: string) => {
     const colors = {
       X: "text-blue-600 dark:text-blue-400",
+      Instagram: "text-pink-600 dark:text-pink-400",
       GitHub: "text-purple-600 dark:text-purple-400",
       YouTube: "text-rose-600 dark:text-rose-400",
       LinkedIn: "text-cyan-600 dark:text-cyan-400",

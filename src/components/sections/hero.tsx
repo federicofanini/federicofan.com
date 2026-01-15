@@ -15,7 +15,7 @@ export function Hero() {
                 <FaceScanIllustration />
               </div>
               <div className="flex flex-col gap-2">
-                <h1 className="text-balance text-lg text-justify">
+                <h1 className="text-balance text-lg text-justify tracking-wider">
                   I&apos;m building{" "}
                   <Link
                     href="https://uara.ai"

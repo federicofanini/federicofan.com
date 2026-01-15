@@ -29,8 +29,6 @@ export function BuildInPublicSection() {
               </p>
             </div>
           </div>
-
-          <YoutubeCarousel />
         </div>
 
         {/* Principles Grid 

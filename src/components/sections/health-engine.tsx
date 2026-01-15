@@ -38,7 +38,7 @@ export function HealthEngineSection() {
         {/* Why I'm building this section */}
         <div className="mx-auto max-w-5xl mt-24 space-y-8">
           <h2 className="text-md uppercase text-muted-foreground font-mono">
-            Why I&apos;m building this
+            Why I&apos;m building this in public
           </h2>
 
           <div className="space-y-6">

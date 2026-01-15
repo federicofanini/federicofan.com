@@ -22,9 +22,7 @@ export const DATA = {
     "IoT",
   ],
   navbar: [
-    { href: "/startups", icon: Code2, label: "startups" },
     { href: "/feedback", icon: Code2, label: "tips" },
-    { href: "/#work", icon: NotebookIcon, label: "work" },
     { href: "/notes", icon: NotebookIcon, label: "notes" },
     { href: "/cv", icon: NotebookIcon, label: "cv" },
   ],

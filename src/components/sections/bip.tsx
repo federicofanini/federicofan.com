@@ -9,13 +9,9 @@ export function BuildInPublicSection() {
         <div className="mx-auto mb-12 max-w-5xl space-y-6">
           <h1 className="text-md uppercase text-muted-foreground font-mono pb-8">
             Why I&apos;m{" "}
-            <Highlighter action="underline" color="#10B981">
-              building
+            <Highlighter action="underline" color="#085983">
+              building in public
             </Highlighter>{" "}
-            in{" "}
-            <Highlighter action="box" color="#8B5CF6">
-              public
-            </Highlighter>
           </h1>
 
           <div className="relative mt-8">

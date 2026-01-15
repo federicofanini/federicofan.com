@@ -8,6 +8,7 @@ import { Documenting } from "@/components/sections/documenting";
 import { ContributionSection } from "@/components/github-contribution/contribution-section";
 import { HealthEngineSection } from "@/components/sections/health-engine";
 import { BuildInPublicSection } from "@/components/sections/bip";
+import { DocumentationHubSection } from "@/components/sections/documentation-hub";
 
 export default async function Page() {
   return (
@@ -15,6 +16,7 @@ export default async function Page() {
       <Hero />
       <HealthEngineSection />
       <BuildInPublicSection />
+      <DocumentationHubSection />
 
       <Startups />
       <ContributionSection />

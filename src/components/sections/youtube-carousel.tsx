@@ -119,7 +119,9 @@ export function YoutubeCarousel() {
               {currentIndex + 1} / {VIDEOS.length}
             </span>
           </div>
-
+          <p className="text-center text-xs text-muted-foreground mt-4">
+            First video coming soon...
+          </p>
           {/* Subscribe Button */}
           <div className="flex justify-center mt-6">
             <Link

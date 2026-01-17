@@ -11,11 +11,14 @@ export function WritingsCarousel({ writings }: WritingsCarouselProps) {
   return (
     <section>
       <div className="mx-auto max-w-6xl">
+        <h3 className="text-md uppercase text-muted-foreground font-mono mb-4">
+          Writings:
+        </h3>
         {/* Scrollable Container */}
         <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
           <div className="flex gap-4 pb-4">
             {writings.slice(0, 3).map((writing) => {
-              const writingUrl = `/${writing.type}/${writing.slug}`;
+              const writingUrl = `/notes/${writing.slug}`;
               return (
                 <Link
                   key={writing.slug}

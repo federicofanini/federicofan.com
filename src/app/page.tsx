@@ -6,14 +6,21 @@ import { CursorStatsSection } from "@/components/sections/cursor-stats";
 import { HomepageFeedback } from "@/components/feedback/homepage-feedback";
 import { YoutubeCarousel } from "@/components/sections/youtube-carousel";
 import { WritingsCarousel } from "@/components/sections/writings-carousel";
-import { getAllWritings } from "@/data/blog";
+import { ContentType, getJourneyPosts } from "@/data/blog";
 
 export default async function Page() {
-  const allPosts = await getAllWritings();
+  const allPosts = await getJourneyPosts();
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       <Hero />
-      {allPosts.length > 1 && <WritingsCarousel writings={allPosts} />}
+      {allPosts.length > 0 && (
+        <WritingsCarousel
+          writings={allPosts.map((post) => ({
+            ...post,
+            type: "journey" as ContentType,
+          }))}
+        />
+      )}
       <HealthEngineSection />
       <YoutubeCarousel />
       <About />

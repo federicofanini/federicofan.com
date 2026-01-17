@@ -155,26 +155,16 @@ export default async function Note({
         <h1 className="font-semibold text-3xl md:text-4xl tracking-tight font-museo">
           {post.metadata.title}
         </h1>
-
-        {/* Summary */}
-        {post.metadata.summary && (
-          <p className="text-muted-foreground text-lg leading-relaxed">
-            {post.metadata.summary}
-          </p>
-        )}
-
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-border via-border/50 to-transparent" />
       </header>
 
-      {/* Featured image */}
+      {/* Featured image with 5:2 aspect ratio */}
       {post.metadata.image && (
-        <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-12 border border-border">
+        <div className="relative w-full aspect-[5/2] rounded-lg overflow-hidden mb-12 border border-border">
           <Image
             src={post.metadata.image}
             alt={post.metadata.title}
             fill
-            className="object-cover"
+            className="object-cover "
             priority
           />
         </div>

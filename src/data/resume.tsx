@@ -66,12 +66,12 @@ export const DATA = {
         navbar: true,
       },
 
-      //Newsletter: {
-      //  name: "Newsletter",
-      //  url: "https://federicofan.substack.com",
-      //  icon: Icons.newsletter,
-      //  navbar: true,
-      //},
+      Newsletter: {
+        name: "Newsletter",
+        url: "https://federicofan.substack.com",
+        icon: Icons.newsletter,
+        navbar: true,
+      },
 
       //Threads: {
       //  name: "Threads",

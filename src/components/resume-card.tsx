@@ -16,7 +16,7 @@ import {
   IconToggleLeftFilled,
   IconToggleRightFilled,
 } from "@tabler/icons-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";

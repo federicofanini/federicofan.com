@@ -15,13 +15,14 @@ export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: {
-    slug: string;
-  };
-}): Promise<Metadata | undefined> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{
+      slug: string;
+    }>;
+  }
+): Promise<Metadata | undefined> {
+  const params = await props.params;
   // Try to find the post in both notes and journey
   let post;
   try {
@@ -66,13 +67,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function Note({
-  params,
-}: {
-  params: {
-    slug: string;
-  };
-}) {
+export default async function Note(
+  props: {
+    params: Promise<{
+      slug: string;
+    }>;
+  }
+) {
+  const params = await props.params;
   // Try to find the post in both notes and journey
   let post;
   try {

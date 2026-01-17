@@ -1,4 +1,5 @@
-"use client";
+"use client";;
+import { use } from "react";
 
 import { DATA } from "@/data/resume";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,11 +21,12 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default function StartupForSalePage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default function StartupForSalePage(
+  props: {
+    params: Promise<{ slug: string }>;
+  }
+) {
+  const params = use(props.params);
   // Find the startup from the work data
   const startup = DATA.work.find(
     (work) =>

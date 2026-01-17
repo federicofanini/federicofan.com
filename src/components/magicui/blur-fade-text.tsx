@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { useMemo } from "react";
 
 interface BlurFadeTextProps {
@@ -26,7 +26,7 @@ const BlurFadeText = ({
   yOffset = 8,
   animateByCharacter = false,
 }: BlurFadeTextProps) => {
-  const defaultVariants: Variants = {
+  const defaultVariants = {
     hidden: { y: yOffset, opacity: 0, filter: "blur(8px)" },
     visible: { y: -yOffset, opacity: 1, filter: "blur(0px)" },
   };
@@ -38,7 +38,7 @@ const BlurFadeText = ({
       <div className="flex">
         <AnimatePresence>
           {characters.map((char, i) => (
-            <motion.span
+            <motion.div
               key={i}
               initial="hidden"
               animate="visible"
@@ -50,10 +50,12 @@ const BlurFadeText = ({
                 ease: "easeOut",
               }}
               className={cn("inline-block", className)}
-              style={{ width: char.trim() === "" ? "0.2em" : "auto" }}
+              style={{
+                width: char.trim() === "" ? "0.2em" : "auto",
+              }}
             >
               {char}
-            </motion.span>
+            </motion.div>
           ))}
         </AnimatePresence>
       </div>
@@ -63,7 +65,7 @@ const BlurFadeText = ({
   return (
     <div className="flex">
       <AnimatePresence>
-        <motion.span
+        <motion.div
           initial="hidden"
           animate="visible"
           exit="hidden"
@@ -76,7 +78,7 @@ const BlurFadeText = ({
           className={cn("inline-block", className)}
         >
           {text}
-        </motion.span>
+        </motion.div>
       </AnimatePresence>
     </div>
   );

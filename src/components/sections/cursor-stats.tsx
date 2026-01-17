@@ -252,8 +252,7 @@ export function CursorStatsSection() {
             <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse mt-2" />
             <p className="text-sm text-muted-foreground flex-1">
               <span className="text-foreground font-semibold">Live stats:</span>{" "}
-              GitHub contributions updated hourly. Cursor stats using fallback
-              data until API key is configured.
+              GitHub contributions updated hourly.
             </p>
           </div>
         </BlurFade>

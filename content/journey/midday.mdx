@@ -1,0 +1,3792 @@
+---
+title: "Midday.ai"
+publishedAt: "2026-01-26"
+summary: "Midday is an AI-powered business assistant platform designed for freelancers, contractors, and solo entrepreneurs. It's a comprehensive SaaS application built as a modern TypeScript monorepo."
+image: "/journey/midday.png"
+tags: ["coding"]
+---
+
+# 1: Monorepo Overview & Structure
+
+## What is This Repository?
+
+**Midday** is an AI-powered business assistant platform designed for freelancers, contractors, and solo entrepreneurs. It's a comprehensive SaaS application built as a modern TypeScript monorepo.
+
+## High-Level Architecture
+
+```
+midday/
+├── apps/                    # Application code
+│   ├── api/                 # Hono + tRPC API server
+│   ├── dashboard/           # Next.js main application
+│   ├── desktop/             # Tauri desktop application
+│   ├── engine/              # Cloudflare Workers banking engine
+│   ├── website/             # Marketing website (Next.js)
+│   └── worker/              # Background worker (BullMQ)
+│
+├── packages/                # Shared libraries
+│   ├── db/                  # Drizzle ORM + PostgreSQL
+│   ├── ui/                  # Shared UI components (shadcn/ui)
+│   ├── supabase/            # Supabase client utilities
+│   ├── jobs/                # Trigger.dev job definitions
+│   ├── email/               # React Email templates
+│   ├── cache/               # Redis caching utilities
+│   └── ... (20+ packages)
+│
+├── docs/                    # Internal documentation
+├── types/                   # Global TypeScript types
+├── package.json             # Root package.json
+├── turbo.json               # Turborepo configuration
+├── biome.json               # Linting/formatting (Biome)
+└── tsconfig.json            # Root TypeScript config
+```
+
+## Monorepo Pattern
+
+This repository follows the **workspaces pattern** using:
+
+- **Package Manager**: Bun (v1.2.22)
+- **Monorepo Orchestrator**: Turborepo (v2.7.0)
+- **Workspaces**: Defined in root `package.json`
+
+```json
+{
+  "workspaces": ["packages/*", "apps/*", "packages/email/*"]
+}
+```
+
+## Key Design Principles
+
+### 1. Separation of Concerns
+- **Apps** contain deployable applications
+- **Packages** contain reusable, shared code
+- Each package has a single responsibility
+
+### 2. Internal Package References
+Packages reference each other using workspace protocol:
+```json
+{
+  "dependencies": {
+    "@midday/ui": "workspace:*",
+    "@midday/db": "workspace:*"
+  }
+}
+```
+
+### 3. Naming Convention
+All packages use the `@midday/` namespace:
+- `@midday/dashboard` - Dashboard app
+- `@midday/ui` - UI component library
+- `@midday/db` - Database layer
+
+### 4. Shared Configuration
+- TypeScript configs in `packages/tsconfig/`
+- Tailwind config shared from `@midday/ui`
+- ESLint replaced by Biome for linting/formatting
+
+## Directory Purpose Summary
+
+| Directory | Purpose |
+|-----------|---------|
+| `apps/api` | Backend API (Hono + tRPC) hosted on Fly.io |
+| `apps/dashboard` | Main SaaS application (Next.js on Vercel) |
+| `apps/desktop` | Native desktop app (Tauri + Rust) |
+| `apps/engine` | Banking integrations (Cloudflare Workers) |
+| `apps/website` | Marketing site (Next.js on Vercel) |
+| `apps/worker` | Background job processor |
+| `packages/db` | Database schema + queries (Drizzle) |
+| `packages/ui` | Shared React components |
+| `packages/supabase` | Supabase utilities |
+| `packages/jobs` | Trigger.dev job definitions |
+| `packages/email` | React Email templates |
+
+## Technology Stack Overview
+
+| Category | Technology |
+|----------|------------|
+| Language | TypeScript |
+| Runtime | Bun / Node.js |
+| Frontend | React 19, Next.js 16 |
+| Backend | Hono, tRPC |
+| Database | PostgreSQL (Supabase) |
+| ORM | Drizzle ORM |
+| Styling | TailwindCSS, shadcn/ui |
+| Auth | Supabase Auth |
+| Storage | Supabase Storage, R2 |
+| Jobs | Trigger.dev, BullMQ |
+| Desktop | Tauri (Rust) |
+
+
+# 2: Package Manager & Tooling
+
+## Package Manager: Bun
+
+Midday uses **Bun** (v1.2.22) as the primary JavaScript runtime and package manager.
+
+### Why Bun?
+
+1. **Speed**: Significantly faster than npm/yarn for installs
+2. **All-in-one**: Runtime, bundler, test runner, package manager
+3. **Node compatibility**: Drop-in replacement for Node.js
+4. **Native TypeScript**: Runs `.ts` files directly
+
+### Configuration
+
+In `package.json`:
+```json
+{
+  "packageManager": "bun@1.2.22"
+}
+```
+
+### Lock File
+- Uses `bun.lock` instead of `package-lock.json`
+
+---
+
+## Monorepo Orchestrator: Turborepo
+
+**Turborepo** (v2.7.0) manages task execution across workspaces.
+
+### Configuration (`turbo.json`)
+
+```json
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "globalDependencies": ["**/.env"],
+  "ui": "stream",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**", "build/**", "lib/**"]
+    },
+    "dev": {
+      "persistent": true,
+      "cache": false
+    },
+    "lint": {
+      "dependsOn": ["^topo"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    }
+  }
+}
+```
+
+### Key Features Used
+
+| Feature | Purpose |
+|---------|---------|
+| `dependsOn: ["^build"]` | Build dependencies first |
+| `persistent: true` | Keep dev servers running |
+| `cache: false` | Disable caching for dev/test |
+| `outputs` | Define what to cache |
+| `passThroughEnv` | Environment variables for builds |
+
+### Common Commands
+
+```bash
+# Run all apps in dev mode
+bun run dev
+
+# Run specific app
+bun run dev:dashboard
+bun run dev:api
+
+# Build all packages
+bun run build
+
+# Typecheck everything
+bun run typecheck
+
+# Lint everything
+bun run lint
+```
+
+---
+
+## Linting & Formatting: Biome
+
+Midday uses **Biome** (v1.9.4) instead of ESLint + Prettier.
+
+### Why Biome?
+
+1. **Speed**: 10-100x faster than ESLint
+2. **All-in-one**: Linting + formatting combined
+3. **Zero config**: Sensible defaults
+4. **Rust-based**: Native performance
+
+### Configuration (`biome.json`)
+
+```json
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "organizeImports": { "enabled": true },
+  "files": {
+    "ignore": ["dist", "node_modules", ".turbo", ".next"]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "useKeyWithClickEvents": "off"
+      },
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      }
+    }
+  },
+  "formatter": {
+    "indentStyle": "space"
+  }
+}
+```
+
+### Commands
+
+```bash
+# Format all files
+bun run format
+
+# Lint check
+bun run lint
+
+# Auto-fix linting issues (in apps)
+biome check --write .
+```
+
+---
+
+## TypeScript Configuration
+
+### Base Config (`packages/tsconfig/base.json`)
+
+```json
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "target": "ES2022",
+    "skipLibCheck": true
+  }
+}
+```
+
+### Next.js Config (`packages/tsconfig/nextjs.json`)
+
+```json
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "preserve",
+    "noEmit": true
+  }
+}
+```
+
+### Usage in Apps/Packages
+
+```json
+// apps/dashboard/tsconfig.json
+{
+  "extends": "@midday/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+---
+
+## Workspace Validation: Manypkg
+
+Uses `@manypkg/cli` to validate workspace consistency:
+
+```bash
+bun run lint  # Includes "manypkg check"
+```
+
+Ensures:
+- Consistent dependency versions
+- Valid workspace references
+- No circular dependencies
+
+---
+
+## Environment Variables
+
+### Turbo Pass-Through
+
+Environment variables are explicitly passed to builds via `turbo.json`:
+
+```json
+{
+  "build": {
+    "passThroughEnv": [
+      "SUPABASE_SERVICE_KEY",
+      "RESEND_API_KEY",
+      "OPENAI_API_KEY",
+      // ... 40+ variables
+    ]
+  }
+}
+```
+
+### Global Dependencies
+
+```json
+{
+  "globalDependencies": ["**/.env"]
+}
+```
+
+Cache invalidates when `.env` files change.
+
+---
+
+## To Recreate This Setup
+
+```bash
+# 1. Initialize with Bun
+bun init
+
+# 2. Install core dependencies
+bun add -D turbo @biomejs/biome @manypkg/cli typescript
+
+# 3. Create workspace structure
+mkdir -p apps packages
+
+# 4. Configure package.json
+{
+  "private": true,
+  "workspaces": ["packages/*", "apps/*"],
+  "packageManager": "bun@1.2.22",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev --parallel",
+    "lint": "turbo lint && manypkg check",
+    "format": "biome format --write ."
+  }
+}
+
+# 5. Create turbo.json and biome.json (see examples above)
+
+# 6. Create packages/tsconfig with base configs
+```
+
+# 3: Applications Architecture
+
+Midday has **6 applications** in the `apps/` directory, each serving a specific purpose.
+
+---
+
+## 1. Dashboard (`apps/dashboard`)
+
+The main SaaS application for end-users.
+
+### Technology Stack
+- **Framework**: Next.js 16.1.3 with App Router
+- **React**: 19.2.3
+- **Styling**: TailwindCSS + shadcn/ui
+- **State**: Zustand, React Query
+- **Forms**: React Hook Form + Zod
+- **Animation**: Framer Motion
+
+### Key Features
+- **AI Integration**: Vercel AI SDK for chat/assistant
+- **Internationalization**: next-international
+- **Charts**: Recharts
+- **PDF**: React PDF for invoice generation
+- **Real-time**: Supabase Realtime
+
+### Directory Structure
+```
+apps/dashboard/
+├── src/
+│   ├── app/                 # Next.js App Router pages
+│   │   ├── [locale]/        # i18n routing
+│   │   │   ├── (app)/       # Authenticated routes
+│   │   │   └── (public)/    # Public routes
+│   │   └── api/             # API routes
+│   ├── actions/             # Server Actions
+│   ├── components/          # React components (577 files!)
+│   ├── hooks/               # Custom React hooks (71 files)
+│   ├── lib/                 # Utility libraries
+│   ├── store/               # Zustand stores
+│   ├── trpc/                # tRPC client setup
+│   └── utils/               # Helper functions
+├── next.config.ts
+├── tailwind.config.ts
+└── package.json
+```
+
+### Configuration Highlights
+
+```typescript
+// next.config.ts
+{
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react", "react-icons", "date-fns",
+      "framer-motion", "recharts"
+    ]
+  },
+  transpilePackages: ["@midday/ui", "@midday/invoice", "@midday/api"]
+}
+```
+
+### Deployment
+- **Host**: Vercel
+- **Port**: 3001 (dev)
+
+---
+
+## 2. API (`apps/api`)
+
+The backend API server handling business logic.
+
+### Technology Stack
+- **Framework**: Hono (lightweight Express alternative)
+- **API Styles**: tRPC + REST (OpenAPI)
+- **Runtime**: Bun
+- **Documentation**: Scalar (OpenAPI viewer)
+
+### Architecture
+```
+apps/api/
+├── src/
+│   ├── ai/                  # AI agents and tools
+│   ├── mcp/                 # Model Context Protocol
+│   ├── rest/                # REST API routes
+│   ├── schemas/             # Zod validation schemas
+│   ├── services/            # Business logic services
+│   ├── trpc/                # tRPC routers
+│   │   ├── init.ts          # tRPC context setup
+│   │   ├── routers/         # Feature routers (40+ files)
+│   │   └── middleware/      # Auth, permissions
+│   └── utils/               # Helpers
+├── Dockerfile               # Fly.io deployment
+└── fly.toml
+```
+
+### Entry Point (`src/index.ts`)
+
+```typescript
+import { trpcServer } from "@hono/trpc-server";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { Scalar } from "@scalar/hono-api-reference";
+
+const app = new OpenAPIHono();
+
+// tRPC integration
+app.use("/trpc/*", trpcServer({
+  router: appRouter,
+  createContext: createTRPCContext,
+}));
+
+// REST API routes
+app.route("/", routers);
+
+// OpenAPI documentation
+app.get("/", Scalar({ url: "/openapi" }));
+```
+
+### Deployment
+- **Host**: Fly.io
+- **Port**: 3003 (dev)
+
+---
+
+## 3. Engine (`apps/engine`)
+
+Banking integrations and financial data processing.
+
+### Technology Stack
+- **Runtime**: Cloudflare Workers
+- **Framework**: Hono with OpenAPI
+- **Banking**: Plaid, GoCardless, Teller
+
+### Architecture
+```
+apps/engine/
+├── src/
+│   ├── providers/           # Banking provider integrations
+│   │   ├── plaid/           # US/Canada banking
+│   │   ├── gocardless/      # EU banking
+│   │   └── teller/          # US banking alternative
+│   ├── routes/              # API endpoints
+│   └── utils/               # Helpers
+├── tasks/                   # Cloudflare Tasks
+└── wrangler.toml            # Cloudflare config
+```
+
+### Cloudflare Features Used
+- **KV Storage**: Token caching
+- **R2 Buckets**: Asset storage
+- **Workers AI**: LLM for categorization
+- **mTLS**: Secure bank connections
+
+### Deployment
+- **Host**: Cloudflare Workers
+- **Route**: engine.midday.ai
+
+---
+
+## 4. Website (`apps/website`)
+
+Marketing and documentation website.
+
+### Technology Stack
+- **Framework**: Next.js 16
+- **Content**: MDX for blog/docs
+- **Animation**: Motion (Framer Motion)
+
+### Directory Structure
+```
+apps/website/
+├── src/
+│   ├── app/                 # Pages
+│   ├── components/          # React components
+│   └── ... (MDX content)
+├── public/                  # Static assets
+└── vercel.json
+```
+
+### Deployment
+- **Host**: Vercel
+- **Port**: 3000 (dev)
+
+---
+
+## 5. Worker (`apps/worker`)
+
+Background job processor for heavy tasks.
+
+### Technology Stack
+- **Runtime**: Bun with Hono
+- **Queue**: BullMQ (Redis-based)
+- **Processing**: Image conversion, exports
+
+### Key Responsibilities
+- Image processing (HEIC → JPEG)
+- CSV/Excel exports
+- Document processing
+- Archive creation
+
+### Directory Structure
+```
+apps/worker/
+├── src/
+│   ├── handlers/            # Job handlers
+│   ├── routes/              # Health/trigger endpoints
+│   └── index.ts             # Worker entry
+├── Dockerfile
+└── fly.toml
+```
+
+### Deployment
+- **Host**: Fly.io (separate from API)
+
+---
+
+## 6. Desktop (`apps/desktop`)
+
+Native desktop application.
+
+### Technology Stack
+- **Framework**: Tauri 2.x (Rust + Web)
+- **Frontend**: React + Vite
+- **Features**: Deep linking, global shortcuts, auto-updates
+
+### Directory Structure
+```
+apps/desktop/
+├── src/                     # React frontend
+│   └── main.tsx
+├── src-tauri/               # Rust backend
+│   ├── src/
+│   │   └── main.rs          # Tauri entry
+│   ├── Cargo.toml           # Rust dependencies
+│   └── tauri.conf.json      # Tauri config
+└── vite.config.ts
+```
+
+### Tauri Plugins Used
+- Deep linking
+- Global shortcuts
+- Auto-updater
+- File dialogs
+
+---
+
+## App Dependencies Overview
+
+```mermaid
+graph TD
+    Dashboard --> API
+    Dashboard --> Engine
+    Desktop --> Dashboard[Dashboard Web]
+    Worker --> API
+    API --> DB[(Packages)]
+    Engine --> DB
+```
+
+## Port Mapping (Development)
+
+| App | Port |
+|-----|------|
+| Website | 3000 |
+| Dashboard | 3001 |
+| Engine | 3002 |
+| API | 3003 |
+
+
+# 4: Packages Structure
+
+Midday has **25+ shared packages** in the `packages/` directory. These provide reusable functionality across all applications.
+
+---
+
+## Package Categories
+
+### 🎨 UI & Styling
+
+#### `@midday/ui`
+Shared component library built on shadcn/ui.
+
+```
+packages/ui/
+├── src/
+│   ├── components/          # 76 React components
+│   │   ├── button.tsx
+│   │   ├── dialog.tsx
+│   │   ├── form.tsx
+│   │   ├── icons.tsx
+│   │   └── ...
+│   ├── hooks/               # Custom hooks
+│   ├── utils/               # cn(), truncate()
+│   └── globals.css          # CSS variables
+├── tailwind.config.ts       # Shared Tailwind config
+└── postcss.config.js
+```
+
+**Key Dependencies:**
+- Radix UI primitives
+- TailwindCSS
+- Framer Motion
+- Lucide icons
+- TipTap editor
+
+**Usage:**
+```typescript
+import { Button } from "@midday/ui/button";
+import { Dialog } from "@midday/ui/dialog";
+import { cn } from "@midday/ui/cn";
+```
+
+#### `@midday/workbench`
+Internal design system playground (Vite + Storybook-like).
+
+---
+
+### 💾 Database & Data
+
+#### `@midday/db`
+Drizzle ORM layer with PostgreSQL.
+
+```
+packages/db/
+├── src/
+│   ├── schema.ts            # Database schema definitions
+│   ├── client.ts            # Drizzle client
+│   ├── queries/             # 45 query files
+│   │   ├── users.ts
+│   │   ├── transactions.ts
+│   │   ├── invoices.ts
+│   │   └── ...
+│   ├── utils/               # Helpers
+│   └── test/                # Tests
+├── migrations/              # SQL migrations
+└── drizzle.config.ts
+```
+
+**Exports Pattern:**
+```json
+{
+  "exports": {
+    "./client": "./src/client.ts",
+    "./schema": "./src/schema.ts",
+    "./queries": "./src/queries/index.ts"
+  }
+}
+```
+
+#### `@midday/supabase`
+Supabase client utilities and queries.
+
+```
+packages/supabase/
+├── src/
+│   ├── client/
+│   │   ├── server.ts        # Server-side client
+│   │   ├── client.ts        # Browser client
+│   │   └── middleware.ts    # Auth middleware
+│   ├── queries/             # Query functions
+│   └── mutations/           # Mutation functions
+```
+
+#### `@midday/cache`
+Redis caching utilities.
+
+```
+packages/cache/
+├── src/
+│   ├── redis-client.ts      # Redis connection
+│   ├── user-cache.ts        # User caching
+│   ├── team-cache.ts        # Team caching
+│   └── chat-cache.ts        # AI chat caching
+```
+
+---
+
+### 🔧 Business Logic
+
+#### `@midday/jobs`
+Trigger.dev background job definitions.
+
+```
+packages/jobs/
+├── src/
+│   ├── tasks/               # Job task definitions
+│   │   ├── bank-sync.ts
+│   │   ├── invoice-recurring.ts
+│   │   └── ...
+│   └── schema.ts            # Job schemas
+├── trigger.config.ts        # Trigger.dev config
+```
+
+#### `@midday/invoice`
+Invoice generation and PDF rendering.
+
+```
+packages/invoice/
+├── src/
+│   ├── templates/           # PDF templates (React)
+│   ├── utils/               # Calculation utilities
+│   └── types.ts
+```
+
+#### `@midday/inbox`
+Email inbox processing logic.
+
+#### `@midday/documents`
+Document processing and OCR.
+
+#### `@midday/categories`
+Transaction categorization with ML embeddings.
+
+#### `@midday/accounting`
+Multi-provider accounting sync (QuickBooks, Xero, Fortnox).
+
+```
+packages/accounting/
+├── src/
+│   ├── providers/
+│   │   ├── quickbooks.ts
+│   │   ├── xero.ts
+│   │   └── fortnox.ts
+│   └── types.ts
+```
+
+---
+
+### 🔌 Integrations
+
+#### `@midday/engine` (types only)
+Type definitions exported from engine app.
+
+#### `@midday/engine-client`
+HTTP client for the Engine service.
+
+#### `@midday/app-store`
+Third-party app integrations.
+
+```
+packages/app-store/
+├── src/
+│   ├── slack/               # Slack integration
+│   ├── gmail/               # Gmail integration
+│   ├── stripe/              # Stripe payments
+│   ├── cursor-mcp/          # MCP integrations
+│   └── ...
+```
+
+---
+
+### 📧 Communication
+
+#### `@midday/email`
+React Email templates.
+
+```
+packages/email/
+├── emails/                  # 17 email templates
+│   ├── invoice-paid.tsx
+│   ├── welcome.tsx
+│   └── ...
+├── components/              # Shared email components
+├── locales/                 # i18n for emails
+└── render.ts                # Email rendering
+```
+
+#### `@midday/notifications`
+Notification system (in-app, push, email).
+
+---
+
+### 🔐 Security & Auth
+
+#### `@midday/encryption`
+Encryption utilities for sensitive data.
+
+#### `@midday/plans`
+Subscription plan definitions.
+
+---
+
+### 🛠️ Utilities
+
+#### `@midday/utils`
+Common utility functions.
+
+```
+packages/utils/
+├── src/
+│   ├── currency.ts          # Currency formatting
+│   ├── dates.ts             # Date helpers
+│   ├── format.ts            # String formatting
+│   └── ...
+```
+
+#### `@midday/logger`
+Structured logging (Pino).
+
+#### `@midday/location`
+Geolocation and country data.
+
+#### `@midday/customers`
+Customer enrichment and management.
+
+---
+
+### ⚙️ Configuration
+
+#### `@midday/tsconfig`
+Shared TypeScript configurations.
+
+```
+packages/tsconfig/
+├── base.json                # Base config
+├── nextjs.json              # Next.js apps
+├── react-library.json       # React packages
+└── package.json
+```
+
+---
+
+## Package Dependencies Graph
+
+```mermaid
+graph TD
+    UI[ui] --> Utils[utils]
+    DB[db] --> Cache[cache]
+    DB --> Categories[categories]
+    DB --> Logger[logger]
+    Jobs[jobs] --> DB
+    Jobs --> Email[email]
+    Jobs --> Engine[engine-client]
+    Invoice[invoice] --> Utils
+    API[api] --> DB
+    API --> Jobs
+    API --> Cache
+    Dashboard[dashboard] --> UI
+    Dashboard --> Invoice
+```
+
+---
+
+## Creating a New Package
+
+### 1. Create Directory Structure
+```bash
+mkdir -p packages/my-package/src
+```
+
+### 2. Create `package.json`
+```json
+{
+  "name": "@midday/my-package",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./utils": "./src/utils.ts"
+  },
+  "dependencies": {
+    "@midday/utils": "workspace:*"
+  }
+}
+```
+
+### 3. Create `tsconfig.json`
+```json
+{
+  "extends": "@midday/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}
+```
+
+### 4. Add to Consuming App
+```json
+{
+  "dependencies": {
+    "@midday/my-package": "workspace:*"
+  }
+}
+```
+
+---
+
+## Export Patterns
+
+### Direct File Exports (Most Common)
+```json
+{
+  "exports": {
+    "./client": "./src/client.ts",
+    "./server": "./src/server.ts"
+  }
+}
+```
+
+### Wildcard Exports
+```json
+{
+  "exports": {
+    "./emails/*": "./emails/*.tsx"
+  }
+}
+```
+
+### Built Outputs
+```json
+{
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  }
+}
+```
+
+# 5: Database & ORM
+
+Midday uses **PostgreSQL** via **Supabase** with **Drizzle ORM** for type-safe database access.
+
+---
+
+## Database Stack
+
+| Component | Technology |
+|-----------|------------|
+| Database | PostgreSQL (Supabase) |
+| ORM | Drizzle ORM |
+| Migrations | drizzle-kit |
+| Auth | Supabase Auth |
+| Realtime | Supabase Realtime |
+| Storage | Supabase Storage |
+
+---
+
+## Drizzle ORM Setup
+
+### Package: `@midday/db`
+
+```
+packages/db/
+├── src/
+│   ├── schema.ts            # All table definitions
+│   ├── client.ts            # Database client setup
+│   ├── job-client.ts        # Job-specific client
+│   ├── worker-client.ts     # Worker-specific client
+│   ├── queries/             # Query functions
+│   │   ├── users.ts
+│   │   ├── transactions.ts
+│   │   ├── invoices.ts
+│   │   └── ... (45 files)
+│   └── utils/               # Helper utilities
+├── migrations/              # SQL migration files
+└── drizzle.config.ts
+```
+
+### Drizzle Configuration
+
+```typescript
+// packages/db/drizzle.config.ts
+import type { Config } from "drizzle-kit";
+
+export default {
+  schema: "./src/schema.ts",
+  out: "./migrations",
+  dialect: "postgresql",
+  dbCredentials: {
+    url: process.env.DATABASE_SESSION_POOLER!,
+  },
+} satisfies Config;
+```
+
+---
+
+## Schema Definition
+
+### Enums
+
+```typescript
+// packages/db/src/schema.ts
+import { pgEnum, pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
+
+// Define enums
+export const accountTypeEnum = pgEnum("account_type", [
+  "depository",
+  "credit",
+  "other_asset",
+  "loan",
+  "other_liability",
+]);
+
+export const bankProvidersEnum = pgEnum("bank_providers", [
+  "gocardless",
+  "plaid",
+  "teller",
+  "enablebanking",
+]);
+
+export const connectionStatusEnum = pgEnum("connection_status", [
+  "disconnected",
+  "connected",
+  "unknown",
+]);
+```
+
+### Custom Types
+
+```typescript
+// Custom tsvector for full-text search
+export const tsvector = customType<{ data: string }>({
+  dataType() {
+    return "tsvector";
+  },
+});
+
+// Numeric with proper casting
+export const numericCasted = customType<{
+  data: number;
+  driverData: string;
+  config: { precision?: number; scale?: number };
+}>({
+  dataType: (config) => {
+    if (config?.precision && config?.scale) {
+      return `numeric(${config.precision}, ${config.scale})`;
+    }
+    return "numeric";
+  },
+  fromDriver: (value: string) => Number.parseFloat(value),
+  toDriver: (value: number) => value.toString(),
+});
+```
+
+### Table Definitions
+
+```typescript
+// Example: Users table
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  fullName: text("full_name"),
+  avatarUrl: text("avatar_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Example: Teams table with relations
+export const teams = pgTable("teams", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  slug: text("slug").unique().notNull(),
+  baseCurrency: text("base_currency").default("USD"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Relations
+export const teamsRelations = relations(teams, ({ many }) => ({
+  members: many(usersOnTeam),
+  transactions: many(transactions),
+  invoices: many(invoices),
+}));
+```
+
+### Advanced Features
+
+```typescript
+// Vector embeddings for AI
+export const transactionEmbeddings = pgTable("transaction_embeddings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  transactionId: uuid("transaction_id").references(() => transactions.id),
+  embedding: vector("embedding", { dimensions: 1536 }),
+});
+
+// Full-text search
+export const documents = pgTable("documents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name"),
+  searchVector: tsvector("search_vector"),
+}, (table) => ({
+  searchIdx: index("documents_search_idx").using("gin", table.searchVector),
+}));
+
+// Row-Level Security policies
+export const invoices = pgTable("invoices", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  teamId: uuid("team_id").references(() => teams.id),
+  // ...
+}, (table) => ({
+  teamPolicy: pgPolicy("invoices_team_policy", {
+    for: "all",
+    using: sql`team_id = current_setting('app.current_team_id')::uuid`,
+  }),
+}));
+```
+
+---
+
+## Database Client
+
+### Standard Client
+
+```typescript
+// packages/db/src/client.ts
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "./schema";
+
+const connectionString = process.env.DATABASE_SESSION_POOLER!;
+
+const client = postgres(connectionString, {
+  prepare: false,
+  idle_timeout: 20,
+  max: 10,
+});
+
+export const db = drizzle(client, { schema });
+export type Database = typeof db;
+```
+
+### Read Replicas
+
+```typescript
+// packages/db/src/replicas.ts
+import { withReplicas } from "drizzle-orm/pg-core";
+
+export const db = withReplicas(primaryDb, [replicaDb]);
+```
+
+---
+
+## Query Patterns
+
+### Query Functions
+
+```typescript
+// packages/db/src/queries/transactions.ts
+import { db } from "../client";
+import { transactions, transactionCategories } from "../schema";
+import { eq, and, between, desc } from "drizzle-orm";
+
+export async function getTransactions(params: {
+  teamId: string;
+  startDate?: Date;
+  endDate?: Date;
+  categoryId?: string;
+}) {
+  const conditions = [eq(transactions.teamId, params.teamId)];
+
+  if (params.startDate && params.endDate) {
+    conditions.push(
+      between(transactions.date, params.startDate, params.endDate)
+    );
+  }
+
+  if (params.categoryId) {
+    conditions.push(eq(transactions.categoryId, params.categoryId));
+  }
+
+  return db.query.transactions.findMany({
+    where: and(...conditions),
+    with: {
+      category: true,
+      attachments: true,
+    },
+    orderBy: [desc(transactions.date)],
+    limit: 50,
+  });
+}
+```
+
+### Aggregations
+
+```typescript
+// packages/db/src/queries/reports.ts
+import { db } from "../client";
+import { transactions } from "../schema";
+import { eq, sql, sum } from "drizzle-orm";
+
+export async function getSpendingByCategory(teamId: string) {
+  return db
+    .select({
+      categoryId: transactions.categoryId,
+      totalAmount: sum(transactions.amount),
+      count: sql<number>`count(*)`,
+    })
+    .from(transactions)
+    .where(eq(transactions.teamId, teamId))
+    .groupBy(transactions.categoryId);
+}
+```
+
+---
+
+## Supabase Integration
+
+### Package: `@midday/supabase`
+
+```
+packages/supabase/
+├── src/
+│   ├── client/
+│   │   ├── server.ts        # Server-side client
+│   │   ├── client.ts        # Browser client
+│   │   └── middleware.ts    # Auth middleware
+│   ├── queries/             # Supabase-specific queries
+│   └── mutations/           # Mutations
+```
+
+### Server Client
+
+```typescript
+// packages/supabase/src/client/server.ts
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+
+export async function createClient() {
+  const cookieStore = await cookies();
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch {
+            // Server Component context
+          }
+        },
+      },
+    }
+  );
+}
+```
+
+### Browser Client
+
+```typescript
+// packages/supabase/src/client/client.ts
+import { createBrowserClient } from "@supabase/ssr";
+
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+```
+
+---
+
+## Migrations
+
+### Creating Migrations
+
+```bash
+# Generate migration from schema changes
+bun run drizzle-kit generate
+
+# Push schema directly (dev only)
+bun run drizzle-kit push
+
+# Run migrations
+bun run drizzle-kit migrate
+```
+
+### Migration Files
+
+```sql
+-- migrations/0001_add_report_types.sql
+ALTER TABLE "reports" 
+ADD COLUMN "type" text DEFAULT 'profit_loss';
+
+-- migrations/0005_add_line_item_tax.sql
+ALTER TABLE "invoice_line_items"
+ADD COLUMN "tax_rate" numeric(5, 2) DEFAULT 0;
+```
+
+---
+
+## Environment Variables
+
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
+SUPABASE_SERVICE_KEY=xxx
+
+# Direct Database (for Drizzle)
+DATABASE_SESSION_POOLER=postgres://user:pass@host:6543/db
+DATABASE_PRIMARY=postgres://user:pass@host:5432/db
+```
+
+---
+
+## Key Features Used
+
+| Feature | Purpose |
+|---------|---------|
+| Vector columns | AI embeddings for categorization |
+| tsvector | Full-text search |
+| JSONB | Flexible metadata storage |
+| RLS Policies | Row-level security |
+| Enums | Type-safe status values |
+| Foreign keys | Referential integrity |
+| Indexes | Query optimization |
+
+
+# 6: API & Backend
+
+Midday's API layer uses **Hono** as the web framework with both **tRPC** and **REST** endpoints.
+
+---
+
+## Backend Stack
+
+| Component | Technology |
+|-----------|------------|
+| Web Framework | Hono |
+| Type-safe API | tRPC |
+| REST API | Hono OpenAPI |
+| Validation | Zod |
+| Documentation | Scalar |
+| Runtime | Bun |
+| Auth | Supabase JWT + API Keys |
+
+---
+
+## API Architecture
+
+```
+apps/api/
+├── src/
+│   ├── index.ts             # Entry point
+│   ├── instrument.ts        # Sentry setup
+│   │
+│   ├── trpc/                # tRPC layer
+│   │   ├── init.ts          # Context & procedures
+│   │   ├── middleware/      # Auth, permissions
+│   │   └── routers/         # Feature routers
+│   │
+│   ├── rest/                # REST API
+│   │   ├── routers/         # REST endpoints
+│   │   └── types.ts         # Context types
+│   │
+│   ├── ai/                  # AI agents & tools
+│   │   ├── agents/          # AI agent definitions
+│   │   └── tools/           # AI function tools
+│   │
+│   ├── mcp/                 # Model Context Protocol
+│   │   └── tools/           # MCP tool implementations
+│   │
+│   ├── schemas/             # Zod schemas
+│   └── services/            # Business logic
+│
+├── Dockerfile
+└── fly.toml
+```
+
+---
+
+## Entry Point
+
+```typescript
+// apps/api/src/index.ts
+import { trpcServer } from "@hono/trpc-server";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { Scalar } from "@scalar/hono-api-reference";
+import { cors } from "hono/cors";
+import { secureHeaders } from "hono/secure-headers";
+
+const app = new OpenAPIHono<Context>();
+
+// Middleware
+app.use(secureHeaders());
+app.use("*", cors({
+  origin: process.env.ALLOWED_API_ORIGINS?.split(",") ?? [],
+  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+}));
+
+// tRPC integration
+app.use("/trpc/*", trpcServer({
+  router: appRouter,
+  createContext: createTRPCContext,
+}));
+
+// REST routes
+app.route("/", routers);
+
+// OpenAPI documentation
+app.doc("/openapi", { openapi: "3.1.0", info: { title: "Midday API" } });
+app.get("/", Scalar({ url: "/openapi", theme: "saturn" }));
+
+// Health check
+app.get("/health", (c) => c.json({ status: "ok" }));
+
+export default {
+  port: process.env.PORT ?? 3000,
+  fetch: app.fetch,
+};
+```
+
+---
+
+## tRPC Setup
+
+### Context Creation
+
+```typescript
+// apps/api/src/trpc/init.ts
+import { initTRPC, TRPCError } from "@trpc/server";
+import superjson from "superjson";
+
+type TRPCContext = {
+  session: Session | null;
+  supabase: SupabaseClient;
+  db: Database;
+  geo: GeoContext;
+  teamId?: string;
+  forcePrimary?: boolean;
+};
+
+export const createTRPCContext = async (_, c: Context): Promise<TRPCContext> => {
+  const accessToken = c.req.header("Authorization")?.split(" ")[1];
+  const session = await verifyAccessToken(accessToken);
+  const supabase = await createClient(accessToken);
+  const geo = getGeoContext(c.req);
+  const forcePrimary = c.req.header("x-force-primary") === "true";
+
+  return { session, supabase, db, geo, forcePrimary };
+};
+
+const t = initTRPC.context<TRPCContext>().create({
+  transformer: superjson,
+});
+
+export const createTRPCRouter = t.router;
+```
+
+### Procedures
+
+```typescript
+// Public procedure (no auth required)
+export const publicProcedure = t.procedure
+  .use(withPrimaryDbMiddleware);
+
+// Protected procedure (auth required)
+export const protectedProcedure = t.procedure
+  .use(withTeamPermissionMiddleware)
+  .use(withPrimaryDbMiddleware)
+  .use(async (opts) => {
+    const { session, teamId } = opts.ctx;
+    
+    if (!session) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    
+    return opts.next({ ctx: { teamId, session } });
+  });
+```
+
+### Router Definition
+
+```typescript
+// apps/api/src/trpc/routers/transactions.ts
+import { z } from "zod";
+import { createTRPCRouter, protectedProcedure } from "../init";
+import { getTransactions, createTransaction } from "@midday/db/queries";
+
+export const transactionsRouter = createTRPCRouter({
+  list: protectedProcedure
+    .input(z.object({
+      startDate: z.date().optional(),
+      endDate: z.date().optional(),
+      categoryId: z.string().optional(),
+      cursor: z.string().optional(),
+      limit: z.number().min(1).max(100).default(50),
+    }))
+    .query(async ({ ctx, input }) => {
+      const transactions = await getTransactions({
+        teamId: ctx.teamId,
+        ...input,
+      });
+      
+      return {
+        items: transactions,
+        nextCursor: transactions.length === input.limit 
+          ? transactions[transactions.length - 1].id 
+          : null,
+      };
+    }),
+
+  create: protectedProcedure
+    .input(z.object({
+      amount: z.number(),
+      description: z.string(),
+      date: z.date(),
+      categoryId: z.string().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return createTransaction({
+        teamId: ctx.teamId,
+        ...input,
+      });
+    }),
+});
+```
+
+### App Router
+
+```typescript
+// apps/api/src/trpc/routers/_app.ts
+import { createTRPCRouter } from "../init";
+import { transactionsRouter } from "./transactions";
+import { invoicesRouter } from "./invoices";
+import { customersRouter } from "./customers";
+// ... more routers
+
+export const appRouter = createTRPCRouter({
+  transactions: transactionsRouter,
+  invoices: invoicesRouter,
+  customers: customersRouter,
+  bankAccounts: bankAccountsRouter,
+  bankConnections: bankConnectionsRouter,
+  documents: documentsRouter,
+  inbox: inboxRouter,
+  tracker: trackerRouter,
+  // ... 40+ routers
+});
+
+export type AppRouter = typeof appRouter;
+```
+
+---
+
+## REST API
+
+### OpenAPI Routes
+
+```typescript
+// apps/api/src/rest/routers/transactions.ts
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { z } from "zod";
+
+const listTransactionsRoute = createRoute({
+  method: "get",
+  path: "/v1/transactions",
+  request: {
+    query: z.object({
+      limit: z.number().optional(),
+      offset: z.number().optional(),
+    }),
+  },
+  responses: {
+    200: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            data: z.array(TransactionSchema),
+            meta: PaginationSchema,
+          }),
+        },
+      },
+      description: "List of transactions",
+    },
+  },
+  security: [{ token: [] }],
+});
+
+const app = new OpenAPIHono();
+
+app.openapi(listTransactionsRoute, async (c) => {
+  const { limit, offset } = c.req.valid("query");
+  const transactions = await getTransactions({ limit, offset });
+  
+  return c.json({
+    data: transactions,
+    meta: { limit, offset, total: transactions.length },
+  });
+});
+
+export { app as transactionsRouter };
+```
+
+---
+
+## Middleware
+
+### Team Permission Middleware
+
+```typescript
+// apps/api/src/trpc/middleware/team-permission.ts
+export const withTeamPermission = async ({ ctx, next }) => {
+  const teamId = ctx.session?.teamId;
+  
+  if (!teamId) {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+  
+  // Verify user has access to this team
+  const hasAccess = await checkTeamAccess(ctx.session.userId, teamId);
+  
+  if (!hasAccess) {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+  
+  return next({ ctx: { ...ctx, teamId } });
+};
+```
+
+### Read-After-Write Consistency
+
+```typescript
+// apps/api/src/trpc/middleware/primary-read-after-write.ts
+export const withPrimaryReadAfterWrite = async ({ ctx, type, next }) => {
+  // For mutations, always use primary
+  // For queries after recent mutations, use primary
+  const shouldUsePrimary = 
+    type === "mutation" || 
+    ctx.forcePrimary || 
+    await hasRecentMutation(ctx.session?.userId);
+  
+  return next({
+    ctx: {
+      ...ctx,
+      db: shouldUsePrimary ? primaryDb : replicaDb,
+    },
+  });
+};
+```
+
+---
+
+## AI Integration
+
+### AI Agents
+
+```typescript
+// apps/api/src/ai/agents/assistant.ts
+import { createAgent } from "@ai-sdk-tools/agents";
+import { openai } from "@ai-sdk/openai";
+
+export const assistantAgent = createAgent({
+  model: openai("gpt-4-turbo"),
+  tools: [
+    getTransactionsTool,
+    categorizeTransactionTool,
+    generateReportTool,
+    searchDocumentsTool,
+  ],
+  systemPrompt: `You are a helpful business assistant...`,
+});
+```
+
+### MCP (Model Context Protocol)
+
+```typescript
+// apps/api/src/mcp/tools/transactions.ts
+import { tool } from "@modelcontextprotocol/sdk";
+
+export const listTransactionsTool = tool({
+  name: "list_transactions",
+  description: "List transactions for the current team",
+  parameters: z.object({
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+  }),
+  execute: async (params, context) => {
+    return getTransactions({
+      teamId: context.teamId,
+      ...params,
+    });
+  },
+});
+```
+
+---
+
+## Authentication
+
+### JWT Verification
+
+```typescript
+// apps/api/src/utils/auth.ts
+import { jwtVerify } from "jose";
+
+export async function verifyAccessToken(token?: string): Promise<Session | null> {
+  if (!token) return null;
+
+  try {
+    const { payload } = await jwtVerify(
+      token,
+      new TextEncoder().encode(process.env.SUPABASE_JWT_SECRET)
+    );
+
+    return {
+      userId: payload.sub!,
+      email: payload.email as string,
+      teamId: payload.team_id as string,
+    };
+  } catch {
+    return null;
+  }
+}
+```
+
+### API Key Authentication
+
+```typescript
+// apps/api/src/utils/api-key.ts
+import { verifyApiKey } from "@midday/db/utils/api-keys";
+
+export async function authenticateApiKey(apiKey: string) {
+  const result = await verifyApiKey(apiKey);
+  
+  if (!result.valid) {
+    throw new Error("Invalid API key");
+  }
+  
+  return {
+    teamId: result.teamId,
+    scopes: result.scopes,
+  };
+}
+```
+
+---
+
+## Deployment
+
+### Dockerfile
+
+```dockerfile
+FROM oven/bun:1.2
+
+WORKDIR /app
+COPY . .
+
+RUN bun install --frozen-lockfile
+RUN bun run build
+
+EXPOSE 3000
+CMD ["bun", "run", "apps/api/src/index.ts"]
+```
+
+### Fly.io Configuration
+
+```toml
+# apps/api/fly.toml
+app = "midday-api"
+primary_region = "ams"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 1
+
+[env]
+  NODE_ENV = "production"
+```
+
+# 7: Frontend Stack
+
+Midday's frontend is built with **Next.js 16**, **React 19**, and **TailwindCSS** with **shadcn/ui** components.
+
+---
+
+## Frontend Stack
+
+| Component | Technology |
+|-----------|------------|
+| Framework | Next.js 16.1.3 (App Router) |
+| React | React 19.2.3 |
+| Styling | TailwindCSS 3.4 |
+| Components | shadcn/ui + Radix UI |
+| State | Zustand + React Query |
+| Forms | React Hook Form + Zod |
+| Animation | Framer Motion |
+| Charts | Recharts |
+| i18n | next-international |
+
+---
+
+## Project Structure
+
+```
+apps/dashboard/
+├── src/
+│   ├── app/                 # Next.js App Router
+│   │   ├── [locale]/        # i18n dynamic segment
+│   │   │   ├── (app)/       # Authenticated routes
+│   │   │   │   ├── (sidebar)/ # Routes with sidebar
+│   │   │   │   │   ├── transactions/
+│   │   │   │   │   ├── invoices/
+│   │   │   │   │   ├── inbox/
+│   │   │   │   │   └── ...
+│   │   │   │   └── layout.tsx
+│   │   │   ├── (public)/    # Public routes
+│   │   │   │   ├── login/
+│   │   │   │   └── ...
+│   │   │   ├── layout.tsx
+│   │   │   └── providers.tsx
+│   │   └── api/             # API routes
+│   │
+│   ├── components/          # React components (577 files)
+│   │   ├── charts/          # Recharts components
+│   │   ├── forms/           # Form components
+│   │   ├── modals/          # Dialog/Sheet modals
+│   │   ├── tables/          # Data tables
+│   │   └── ...
+│   │
+│   ├── actions/             # Server Actions
+│   ├── hooks/               # Custom hooks (71 files)
+│   ├── store/               # Zustand stores
+│   ├── lib/                 # Utilities
+│   ├── trpc/                # tRPC client
+│   ├── utils/               # Helpers
+│   └── styles/              # Global CSS
+│
+├── next.config.ts
+├── tailwind.config.ts
+└── package.json
+```
+
+---
+
+## Next.js Configuration
+
+```typescript
+// apps/dashboard/next.config.ts
+import { withSentryConfig } from "@sentry/nextjs";
+
+const config = {
+  poweredByHeader: false,
+  reactStrictMode: true,
+  
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "react-icons",
+      "date-fns",
+      "framer-motion",
+      "recharts",
+      "@dnd-kit/core",
+    ],
+  },
+  
+  images: {
+    loader: "custom",
+    loaderFile: "./image-loader.ts",
+    remotePatterns: [{ protocol: "https", hostname: "**" }],
+  },
+  
+  transpilePackages: [
+    "@midday/ui",
+    "@midday/invoice",
+    "@midday/api",
+  ],
+  
+  serverExternalPackages: ["@react-pdf/renderer", "pino"],
+};
+
+export default withSentryConfig(config, { /* sentry options */ });
+```
+
+---
+
+## TailwindCSS Configuration
+
+```typescript
+// apps/dashboard/tailwind.config.ts
+import baseConfig from "@midday/ui/tailwind.config";
+import desktopPlugin from "@midday/desktop-client/desktop-variants";
+import type { Config } from "tailwindcss";
+
+export default {
+  content: [
+    "./src/**/*.{ts,tsx}",
+    "../../packages/ui/src/**/*.{ts,tsx}",
+    "../../packages/invoice/src/**/*.{ts,tsx}",
+  ],
+  presets: [baseConfig],  // Extend shared config
+  plugins: [desktopPlugin],
+} satisfies Config;
+```
+
+### Base Tailwind Config (from @midday/ui)
+
+```typescript
+// packages/ui/tailwind.config.ts
+export default {
+  darkMode: ["class"],
+  theme: {
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        // ... more semantic colors
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        shimmer: "shimmer 2.5s linear infinite",
+        // ... more animations
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+};
+```
+
+---
+
+## Component Library (shadcn/ui)
+
+### Package: `@midday/ui`
+
+```typescript
+// Usage in dashboard
+import { Button } from "@midday/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@midday/ui/dialog";
+import { Form, FormField, FormItem } from "@midday/ui/form";
+import { Input } from "@midday/ui/input";
+import { cn } from "@midday/ui/cn";
+
+export function MyComponent() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Open</Button>
+      </DialogTrigger>
+      <DialogContent className={cn("sm:max-w-md")}>
+        {/* Content */}
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### Key UI Components
+
+| Component | Source | Purpose |
+|-----------|--------|---------|
+| Button | Radix Slot | Actions |
+| Dialog | Radix Dialog | Modals |
+| Sheet | Vaul | Side panels |
+| Form | React Hook Form | Forms |
+| Table | TanStack Table | Data tables |
+| Select | Radix Select | Dropdowns |
+| Calendar | react-day-picker | Date picking |
+| Editor | TipTap | Rich text |
+| Chart | Recharts | Data visualization |
+
+---
+
+## State Management
+
+### Zustand Stores
+
+```typescript
+// apps/dashboard/src/store/transaction-store.ts
+import { create } from "zustand";
+
+interface TransactionStore {
+  selectedIds: string[];
+  filters: TransactionFilters;
+  setFilters: (filters: TransactionFilters) => void;
+  toggleSelection: (id: string) => void;
+  clearSelection: () => void;
+}
+
+export const useTransactionStore = create<TransactionStore>((set) => ({
+  selectedIds: [],
+  filters: {},
+  
+  setFilters: (filters) => set({ filters }),
+  
+  toggleSelection: (id) => set((state) => ({
+    selectedIds: state.selectedIds.includes(id)
+      ? state.selectedIds.filter((i) => i !== id)
+      : [...state.selectedIds, id],
+  })),
+  
+  clearSelection: () => set({ selectedIds: [] }),
+}));
+```
+
+### React Query + tRPC
+
+```typescript
+// apps/dashboard/src/trpc/client.ts
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { QueryClient } from "@tanstack/react-query";
+import type { AppRouter } from "@midday/api/trpc/routers/_app";
+import superjson from "superjson";
+
+export const trpc = createTRPCClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: `${process.env.NEXT_PUBLIC_API_URL}/trpc`,
+      transformer: superjson,
+      headers: () => ({
+        Authorization: `Bearer ${getAccessToken()}`,
+      }),
+    }),
+  ],
+});
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60, // 1 minute
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+```
+
+### Usage in Components
+
+```typescript
+// Using tRPC with React Query
+import { trpc } from "@/trpc/client";
+
+export function TransactionList() {
+  const { data, isLoading } = trpc.transactions.list.useQuery({
+    startDate: new Date("2024-01-01"),
+    limit: 50,
+  });
+
+  const createMutation = trpc.transactions.create.useMutation({
+    onSuccess: () => {
+      queryClient.invalidateQueries(["transactions"]);
+    },
+  });
+
+  if (isLoading) return <Skeleton />;
+
+  return (
+    <Table>
+      {data?.items.map((tx) => (
+        <TableRow key={tx.id}>{/* ... */}</TableRow>
+      ))}
+    </Table>
+  );
+}
+```
+
+---
+
+## Server Actions
+
+```typescript
+// apps/dashboard/src/actions/invoice-actions.ts
+"use server";
+
+import { action } from "next-safe-action";
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
+
+const createInvoiceSchema = z.object({
+  customerId: z.string(),
+  items: z.array(z.object({
+    description: z.string(),
+    quantity: z.number(),
+    price: z.number(),
+  })),
+});
+
+export const createInvoiceAction = action
+  .schema(createInvoiceSchema)
+  .action(async ({ parsedInput }) => {
+    const invoice = await db.insert(invoices).values({
+      customerId: parsedInput.customerId,
+      // ...
+    });
+
+    revalidatePath("/invoices");
+    return { success: true, invoice };
+  });
+```
+
+---
+
+## Internationalization
+
+```typescript
+// apps/dashboard/src/locales/client.ts
+import { createI18nClient } from "next-international/client";
+
+export const { useI18n, I18nProvider } = createI18nClient({
+  en: () => import("./en"),
+  sv: () => import("./sv"),
+});
+
+// Usage
+export function MyComponent() {
+  const t = useI18n();
+  return <h1>{t("dashboard.title")}</h1>;
+}
+```
+
+---
+
+## Key Patterns
+
+### 1. Route Groups
+```
+app/[locale]/(app)/(sidebar)/transactions/page.tsx
+```
+- `[locale]` - Dynamic i18n segment
+- `(app)` - Route group for authenticated layout
+- `(sidebar)` - Route group for sidebar layout
+
+### 2. Parallel Data Loading
+```typescript
+// page.tsx
+export default async function Page() {
+  // Parallel data fetching
+  const [transactions, categories, accounts] = await Promise.all([
+    getTransactions(),
+    getCategories(),
+    getBankAccounts(),
+  ]);
+
+  return <Dashboard data={{ transactions, categories, accounts }} />;
+}
+```
+
+### 3. Optimistic Updates
+```typescript
+const mutation = trpc.transactions.update.useMutation({
+  onMutate: async (newData) => {
+    await queryClient.cancelQueries(["transactions"]);
+    const previous = queryClient.getQueryData(["transactions"]);
+    queryClient.setQueryData(["transactions"], (old) => ({
+      ...old,
+      items: old.items.map((t) =>
+        t.id === newData.id ? { ...t, ...newData } : t
+      ),
+    }));
+    return { previous };
+  },
+  onError: (_, __, context) => {
+    queryClient.setQueryData(["transactions"], context.previous);
+  },
+});
+```
+
+# 8: Jobs & Background Tasks
+
+Midday uses **Trigger.dev** for scheduled/triggered jobs and **BullMQ** for queue-based workers.
+
+---
+
+## Background Task Stack
+
+| Component | Technology | Use Case |
+|-----------|------------|----------|
+| Scheduled Jobs | Trigger.dev | Bank sync, recurring invoices |
+| Queue Processing | BullMQ + Redis | Image processing, exports |
+| Notifications | Trigger.dev | Email, push notifications |
+
+---
+
+## Trigger.dev (`@midday/jobs`)
+
+### Configuration
+
+```typescript
+// packages/jobs/trigger.config.ts
+import { defineConfig } from "@trigger.dev/sdk";
+
+export default defineConfig({
+  project: process.env.TRIGGER_PROJECT_ID!,
+  runtime: "node",
+  logLevel: "log",
+  maxDuration: 60,
+  
+  experimental_processKeepAlive: true,
+  
+  retries: {
+    enabledInDev: false,
+    default: {
+      maxAttempts: 3,
+      minTimeoutInMs: 1000,
+      maxTimeoutInMs: 10000,
+      factor: 2,
+      randomize: true,
+    },
+  },
+  
+  build: {
+    external: ["sharp", "canvas", "pino"],
+  },
+  
+  dirs: ["./src/tasks"],
+});
+```
+
+### Directory Structure
+
+```
+packages/jobs/
+├── src/
+│   ├── tasks/               # Job definitions
+│   │   ├── bank/
+│   │   │   ├── sync-account.ts
+│   │   │   ├── sync-connection.ts
+│   │   │   └── reconnect.ts
+│   │   ├── invoice/
+│   │   │   ├── generate-pdf.ts
+│   │   │   ├── send-invoice.ts
+│   │   │   └── recurring.ts
+│   │   ├── document/
+│   │   │   ├── process.ts
+│   │   │   └── extract.ts
+│   │   ├── notification/
+│   │   │   ├── send-email.ts
+│   │   │   └── send-push.ts
+│   │   └── export/
+│   │       └── generate-csv.ts
+│   │
+│   └── schema.ts            # Shared schemas
+│
+├── scripts/                 # Admin scripts
+└── trigger.config.ts
+```
+
+### Job Definition Example
+
+```typescript
+// packages/jobs/src/tasks/bank/sync-account.ts
+import { task, schedules } from "@trigger.dev/sdk";
+import { z } from "zod";
+import { db } from "@midday/db/client";
+import { syncBankAccount } from "@midday/engine-client";
+
+export const syncAccountTask = task({
+  id: "bank-sync-account",
+  
+  run: async (payload: { accountId: string; teamId: string }) => {
+    const { accountId, teamId } = payload;
+    
+    // Get account details
+    const account = await db.query.bankAccounts.findFirst({
+      where: eq(bankAccounts.id, accountId),
+    });
+    
+    if (!account) {
+      throw new Error(`Account ${accountId} not found`);
+    }
+    
+    // Sync transactions from banking provider
+    const transactions = await syncBankAccount({
+      accountId,
+      provider: account.provider,
+      accessToken: account.accessToken,
+    });
+    
+    // Upsert transactions
+    for (const tx of transactions) {
+      await db.insert(transactions).values({
+        ...tx,
+        teamId,
+        accountId,
+      }).onConflictDoUpdate({
+        target: [transactions.externalId],
+        set: { ...tx },
+      });
+    }
+    
+    return { synced: transactions.length };
+  },
+});
+```
+
+### Scheduled Jobs
+
+```typescript
+// packages/jobs/src/tasks/bank/scheduled-sync.ts
+import { schedules } from "@trigger.dev/sdk";
+
+export const scheduledBankSync = schedules.task({
+  id: "scheduled-bank-sync",
+  cron: "0 */6 * * *",  // Every 6 hours
+  
+  run: async () => {
+    // Get all active bank connections
+    const connections = await db.query.bankConnections.findMany({
+      where: eq(bankConnections.status, "connected"),
+      with: { accounts: true },
+    });
+    
+    // Trigger sync for each account
+    for (const connection of connections) {
+      for (const account of connection.accounts) {
+        await syncAccountTask.trigger({
+          accountId: account.id,
+          teamId: connection.teamId,
+        });
+      }
+    }
+    
+    return { connections: connections.length };
+  },
+});
+```
+
+### Recurring Invoice Task
+
+```typescript
+// packages/jobs/src/tasks/invoice/recurring.ts
+import { schedules } from "@trigger.dev/sdk";
+
+export const processRecurringInvoices = schedules.task({
+  id: "process-recurring-invoices",
+  cron: "0 9 * * *",  // Daily at 9 AM
+  
+  run: async () => {
+    // Get invoices due for generation
+    const recurringInvoices = await db.query.invoiceRecurring.findMany({
+      where: and(
+        eq(invoiceRecurring.status, "active"),
+        lte(invoiceRecurring.nextDate, new Date()),
+      ),
+    });
+    
+    for (const recurring of recurringInvoices) {
+      // Create new invoice from template
+      const invoice = await createInvoiceFromRecurring(recurring);
+      
+      // Send invoice
+      await sendInvoiceTask.trigger({ invoiceId: invoice.id });
+      
+      // Update next date
+      await updateNextRecurringDate(recurring.id);
+    }
+    
+    return { processed: recurringInvoices.length };
+  },
+});
+```
+
+### Triggering Jobs from API
+
+```typescript
+// apps/api/src/trpc/routers/bank-connections.ts
+import { syncAccountTask } from "@midday/jobs/tasks/bank/sync-account";
+
+export const bankConnectionsRouter = createTRPCRouter({
+  sync: protectedProcedure
+    .input(z.object({ accountId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // Trigger background job
+      await syncAccountTask.trigger({
+        accountId: input.accountId,
+        teamId: ctx.teamId,
+      });
+      
+      return { triggered: true };
+    }),
+});
+```
+
+---
+
+## BullMQ Worker (`apps/worker`)
+
+For heavy processing tasks that need more control.
+
+### Directory Structure
+
+```
+apps/worker/
+├── src/
+│   ├── index.ts             # Entry point
+│   ├── queues/              # Queue definitions
+│   │   ├── document.ts
+│   │   ├── export.ts
+│   │   └── image.ts
+│   ├── handlers/            # Job handlers
+│   │   ├── process-document.ts
+│   │   ├── generate-export.ts
+│   │   └── convert-image.ts
+│   └── utils/
+│
+├── Dockerfile
+└── fly.toml
+```
+
+### Queue Setup
+
+```typescript
+// apps/worker/src/queues/document.ts
+import { Queue, Worker } from "bullmq";
+import Redis from "ioredis";
+
+const redis = new Redis(process.env.REDIS_URL!);
+
+export const documentQueue = new Queue("document-processing", {
+  connection: redis,
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: {
+      type: "exponential",
+      delay: 1000,
+    },
+  },
+});
+
+export const documentWorker = new Worker(
+  "document-processing",
+  async (job) => {
+    switch (job.name) {
+      case "process":
+        return processDocument(job.data);
+      case "extract-text":
+        return extractText(job.data);
+      case "generate-thumbnail":
+        return generateThumbnail(job.data);
+    }
+  },
+  {
+    connection: redis,
+    concurrency: 5,
+  }
+);
+```
+
+### Job Handlers
+
+```typescript
+// apps/worker/src/handlers/convert-image.ts
+import sharp from "sharp";
+import heicConvert from "heic-convert";
+
+export async function convertImage(data: {
+  inputPath: string;
+  outputPath: string;
+  format: "jpeg" | "png" | "webp";
+}) {
+  const { inputPath, outputPath, format } = data;
+  
+  // Handle HEIC conversion
+  if (inputPath.endsWith(".heic")) {
+    const heicBuffer = await fs.readFile(inputPath);
+    const jpegBuffer = await heicConvert({
+      buffer: heicBuffer,
+      format: "JPEG",
+      quality: 0.9,
+    });
+    await fs.writeFile(outputPath, Buffer.from(jpegBuffer));
+    return;
+  }
+  
+  // Use Sharp for other formats
+  await sharp(inputPath)
+    .resize(1920, 1080, { fit: "inside" })
+    .toFormat(format, { quality: 85 })
+    .toFile(outputPath);
+}
+```
+
+### Export Generation
+
+```typescript
+// apps/worker/src/handlers/generate-export.ts
+import { format as formatCsv } from "@fast-csv/format";
+import archiver from "archiver";
+
+export async function generateTransactionExport(data: {
+  teamId: string;
+  startDate: Date;
+  endDate: Date;
+  format: "csv" | "xlsx";
+}) {
+  const transactions = await db.query.transactions.findMany({
+    where: and(
+      eq(transactions.teamId, data.teamId),
+      between(transactions.date, data.startDate, data.endDate),
+    ),
+    with: { category: true, attachments: true },
+  });
+  
+  if (data.format === "csv") {
+    const stream = formatCsv({ headers: true });
+    
+    for (const tx of transactions) {
+      stream.write({
+        date: tx.date,
+        description: tx.description,
+        amount: tx.amount,
+        category: tx.category?.name,
+      });
+    }
+    
+    stream.end();
+    return stream;
+  }
+  
+  // Handle xlsx...
+}
+```
+
+### Worker Entry Point
+
+```typescript
+// apps/worker/src/index.ts
+import { Hono } from "hono";
+import { documentWorker } from "./queues/document";
+import { exportWorker } from "./queues/export";
+import { imageWorker } from "./queues/image";
+
+const app = new Hono();
+
+// Health check
+app.get("/health", (c) => {
+  const workers = [documentWorker, exportWorker, imageWorker];
+  const allRunning = workers.every((w) => w.isRunning());
+  
+  return c.json({ 
+    status: allRunning ? "ok" : "degraded",
+    workers: workers.map((w) => ({ 
+      name: w.name, 
+      running: w.isRunning() 
+    })),
+  });
+});
+
+// Graceful shutdown
+process.on("SIGTERM", async () => {
+  await Promise.all([
+    documentWorker.close(),
+    exportWorker.close(),
+    imageWorker.close(),
+  ]);
+  process.exit(0);
+});
+
+export default {
+  port: process.env.PORT ?? 3000,
+  fetch: app.fetch,
+};
+```
+
+---
+
+## Job Client (`@midday/job-client`)
+
+Shared client for triggering jobs from any app.
+
+```typescript
+// packages/job-client/src/index.ts
+import { tasks } from "@trigger.dev/sdk";
+
+export const jobClient = {
+  syncBankAccount: async (data: { accountId: string; teamId: string }) => {
+    return tasks.trigger("bank-sync-account", data);
+  },
+  
+  processDocument: async (data: { documentId: string }) => {
+    return tasks.trigger("document-process", data);
+  },
+  
+  sendInvoice: async (data: { invoiceId: string }) => {
+    return tasks.trigger("invoice-send", data);
+  },
+  
+  generateExport: async (data: ExportParams) => {
+    return tasks.trigger("export-generate", data);
+  },
+};
+```
+
+---
+
+## Common Job Patterns
+
+### 1. Fan-out Pattern
+```typescript
+// Trigger multiple sub-jobs
+const accounts = await getAccounts(connectionId);
+await Promise.all(
+  accounts.map((account) =>
+    syncAccountTask.trigger({ accountId: account.id })
+  )
+);
+```
+
+### 2. Retry with Backoff
+```typescript
+task({
+  id: "my-task",
+  retry: {
+    maxAttempts: 5,
+    factor: 2,
+    minTimeoutInMs: 1000,
+    maxTimeoutInMs: 30000,
+  },
+  run: async () => { /* ... */ },
+});
+```
+
+### 3. Progress Tracking
+```typescript
+run: async (payload, { ctx }) => {
+  const items = await getItems();
+  
+  for (let i = 0; i < items.length; i++) {
+    await processItem(items[i]);
+    await ctx.sendEvent("progress", { 
+      current: i + 1, 
+      total: items.length 
+    });
+  }
+}
+```
+
+
+# 9: Deployment & Infrastructure
+
+Midday uses a multi-cloud deployment strategy optimized for performance and cost.
+
+---
+
+## Infrastructure Overview
+
+| Service | Platform | Region |
+|---------|----------|--------|
+| Dashboard | Vercel | Global Edge |
+| Website | Vercel | Global Edge |
+| API | Fly.io | Amsterdam (primary) |
+| Worker | Fly.io | Amsterdam |
+| Engine | Cloudflare Workers | Global Edge |
+| Database | Supabase | EU (Frankfurt) |
+| Redis | Upstash | EU |
+| Storage | Supabase Storage / R2 | EU |
+| Jobs | Trigger.dev | Cloud |
+
+---
+
+## Vercel (Dashboard & Website)
+
+### Configuration
+
+```json
+// apps/dashboard/vercel.json
+{
+  "crons": [],
+  "framework": "nextjs"
+}
+```
+
+### Deployment Settings
+
+- **Build Command**: `turbo build --filter=@midday/dashboard`
+- **Output Directory**: `.next`
+- **Node Version**: 20.x
+- **Package Manager**: Bun
+
+### Environment Variables
+
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_KEY=
+
+# API
+NEXT_PUBLIC_API_URL=https://api.midday.ai
+
+# Sentry
+SENTRY_AUTH_TOKEN=
+SENTRY_ORG=
+SENTRY_PROJECT=
+NEXT_PUBLIC_SENTRY_DSN=
+
+# Analytics
+NEXT_PUBLIC_OPENPANEL_CLIENT_ID=
+```
+
+### Edge & Server Functions
+
+Next.js automatically deploys:
+- **Edge Functions**: Middleware, lightweight API routes
+- **Serverless Functions**: Server Actions, heavy API routes
+
+---
+
+## Fly.io (API & Worker)
+
+### API Configuration
+
+```toml
+# apps/api/fly.toml
+app = "midday-api"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 1
+
+[http_service.concurrency]
+  type = "requests"
+  hard_limit = 250
+  soft_limit = 200
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3000
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+[env]
+  NODE_ENV = "production"
+  TZ = "UTC"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 2
+  memory_mb = 1024
+```
+
+### Dockerfile
+
+```dockerfile
+# apps/api/Dockerfile
+FROM oven/bun:1.2 AS base
+WORKDIR /app
+
+# Install dependencies
+FROM base AS deps
+COPY package.json bun.lock ./
+COPY packages ./packages
+COPY apps/api/package.json ./apps/api/
+RUN bun install --frozen-lockfile
+
+# Build
+FROM deps AS build
+COPY . .
+RUN bun run build --filter=@midday/api
+
+# Production
+FROM base AS production
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/packages ./packages
+COPY --from=build /app/apps/api ./apps/api
+
+EXPOSE 3000
+CMD ["bun", "run", "apps/api/src/index.ts"]
+```
+
+### Worker Configuration
+
+```toml
+# apps/worker/fly.toml
+app = "midday-worker"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+
+# No HTTP service - runs as a background process
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 2
+  memory_mb = 2048  # More RAM for image processing
+```
+
+### Deployment Commands
+
+```bash
+# Deploy API
+fly deploy --config apps/api/fly.toml
+
+# Deploy Worker
+fly deploy --config apps/worker/fly.toml
+
+# Scale machines
+fly scale count 2 --region ams
+
+# View logs
+fly logs --app midday-api
+```
+
+---
+
+## Cloudflare Workers (Engine)
+
+### Wrangler Configuration
+
+```toml
+# apps/engine/wrangler.toml
+compatibility_date = "2024-11-11"
+workers_dev = false
+logpush = true
+compatibility_flags = ["nodejs_compat_v2"]
+
+[observability]
+enabled = true
+
+[env.production]
+name = "engine"
+route = { pattern = "engine.midday.ai/*", zone_name = "midday.ai" }
+
+# KV for caching
+kv_namespaces = [
+  { binding = "KV", id = "xxx" }
+]
+
+# R2 for storage
+r2_buckets = [
+  { binding = "STORAGE", bucket_name = "engine-assets", jurisdiction = "eu" }
+]
+
+# mTLS for banking APIs
+mtls_certificates = [
+  { binding = "TELLER_CERT", certificate_id = "xxx" }
+]
+
+# Workers AI
+[env.production.ai]
+binding = "AI"
+provider = "llama"
+model = "llama-3.3"
+jurisdiction = "eu"
+```
+
+### Deployment
+
+```bash
+# Deploy to production
+wrangler deploy --env production
+
+# Deploy to staging
+wrangler deploy --env staging
+
+# View logs
+wrangler tail --env production
+```
+
+### Bindings in Code
+
+```typescript
+// apps/engine/src/index.ts
+type Env = {
+  KV: KVNamespace;
+  STORAGE: R2Bucket;
+  AI: Ai;
+  TELLER_CERT: Fetcher;
+};
+
+const app = new OpenAPIHono<{ Bindings: Env }>();
+
+app.get("/api/cache/:key", async (c) => {
+  const cached = await c.env.KV.get(c.req.param("key"));
+  return c.json({ data: cached });
+});
+```
+
+---
+
+## Supabase (Database & Auth)
+
+### Services Used
+
+| Service | Purpose |
+|---------|---------|
+| Database | PostgreSQL with pgvector |
+| Auth | User authentication |
+| Storage | File uploads |
+| Realtime | Live updates |
+| Edge Functions | (Not used - using Fly.io) |
+
+### Database Setup
+
+```sql
+-- Enable extensions
+create extension if not exists vector;
+create extension if not exists pg_trgm;
+
+-- Enable RLS
+alter table transactions enable row level security;
+```
+
+### Environment Variables
+
+```env
+# Public (client-side)
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+
+# Private (server-side)
+SUPABASE_SERVICE_KEY=eyJ...
+DATABASE_SESSION_POOLER=postgres://...pooler.supabase.com:6543/postgres
+```
+
+---
+
+## Redis (Upstash)
+
+### Configuration
+
+```env
+UPSTASH_REDIS_REST_URL=https://xxx.upstash.io
+UPSTASH_REDIS_REST_TOKEN=xxx
+```
+
+### Usage
+
+```typescript
+// packages/cache/src/redis-client.ts
+import { createClient } from "redis";
+
+const redis = createClient({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+});
+
+export { redis };
+```
+
+---
+
+## Trigger.dev (Jobs)
+
+### Cloud Setup
+
+```env
+TRIGGER_PROJECT_ID=proj_xxx
+TRIGGER_API_KEY=tr_xxx
+TRIGGER_API_URL=https://api.trigger.dev
+```
+
+### Deployment
+
+```bash
+# Deploy jobs
+cd packages/jobs
+bun run trigger deploy
+
+# View dashboard
+# https://cloud.trigger.dev
+```
+
+---
+
+## CI/CD (GitHub Actions)
+
+### Example Workflow
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: 1.2.22
+      
+      - run: bun install --frozen-lockfile
+      
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      
+      - run: flyctl deploy --config apps/api/fly.toml
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+  deploy-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_DASHBOARD_PROJECT_ID }}
+          vercel-args: '--prod'
+
+  deploy-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: apps/engine
+          command: deploy --env production
+```
+
+---
+
+## Domain Configuration
+
+| Subdomain | Target |
+|-----------|--------|
+| midday.ai | Vercel (website) |
+| app.midday.ai | Vercel (dashboard) |
+| api.midday.ai | Fly.io (API) |
+| engine.midday.ai | Cloudflare Workers |
+
+---
+
+## Monitoring & Observability
+
+| Tool | Purpose |
+|------|---------|
+| Sentry | Error tracking |
+| OpenPanel | Analytics |
+| Fly.io Metrics | API performance |
+| Cloudflare Analytics | Edge metrics |
+| Trigger.dev Dashboard | Job monitoring |
+
+
+# 10: Recreate Architecture Guide
+
+This is a comprehensive step-by-step guide to recreate the Midday monorepo architecture for your own project.
+
+---
+
+## Phase 1: Initial Setup
+
+### 1.1 Create Monorepo Structure
+
+```bash
+# Create project directory
+mkdir my-saas && cd my-saas
+
+# Initialize with Bun
+bun init
+
+# Create directory structure
+mkdir -p apps/{dashboard,api,website,worker}
+mkdir -p packages/{ui,db,utils,tsconfig,cache,jobs,email}
+mkdir -p types
+```
+
+### 1.2 Root package.json
+
+```json
+{
+  "name": "my-saas",
+  "private": true,
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev --parallel",
+    "lint": "turbo lint && manypkg check",
+    "format": "biome format --write .",
+    "typecheck": "turbo typecheck",
+    "clean": "git clean -xdf node_modules",
+    "dev:dashboard": "turbo dev --filter=@my-saas/dashboard",
+    "dev:api": "turbo dev --filter=@my-saas/api"
+  },
+  "dependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@manypkg/cli": "^0.25.1",
+    "turbo": "2.7.0",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "bun@1.2.22"
+}
+```
+
+### 1.3 Turborepo Configuration
+
+```json
+// turbo.json
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "globalDependencies": ["**/.env"],
+  "ui": "stream",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "dev": {
+      "persistent": true,
+      "cache": false
+    },
+    "lint": {
+      "dependsOn": ["^topo"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
+    "topo": {
+      "dependsOn": ["^topo"]
+    }
+  }
+}
+```
+
+### 1.4 Biome Configuration
+
+```json
+// biome.json
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "organizeImports": { "enabled": true },
+  "files": {
+    "ignore": ["dist", "node_modules", ".turbo", ".next"]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": { "noSvgWithoutTitle": "off" },
+      "suspicious": { "noExplicitAny": "off" }
+    }
+  },
+  "formatter": {
+    "indentStyle": "space"
+  }
+}
+```
+
+---
+
+## Phase 2: TypeScript Configuration
+
+### 2.1 Base Config
+
+```json
+// packages/tsconfig/base.json
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "target": "ES2022",
+    "skipLibCheck": true
+  }
+}
+```
+
+### 2.2 Next.js Config
+
+```json
+// packages/tsconfig/nextjs.json
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "preserve",
+    "noEmit": true
+  }
+}
+```
+
+### 2.3 Root TypeScript Config
+
+```json
+// tsconfig.json
+{
+  "extends": "@my-saas/tsconfig/base.json"
+}
+```
+
+---
+
+## Phase 3: Shared Packages
+
+### 3.1 Utils Package
+
+```bash
+mkdir -p packages/utils/src
+```
+
+```json
+// packages/utils/package.json
+{
+  "name": "@my-saas/utils",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./format": "./src/format.ts",
+    "./dates": "./src/dates.ts"
+  }
+}
+```
+
+```typescript
+// packages/utils/src/index.ts
+export * from "./format";
+export * from "./dates";
+```
+
+### 3.2 UI Package
+
+```bash
+mkdir -p packages/ui/src/components
+```
+
+```json
+// packages/ui/package.json
+{
+  "name": "@my-saas/ui",
+  "private": true,
+  "sideEffects": false,
+  "exports": {
+    "./button": "./src/components/button.tsx",
+    "./dialog": "./src/components/dialog.tsx",
+    "./cn": "./src/utils/cn.ts",
+    "./tailwind.config": "./tailwind.config.ts",
+    "./globals.css": "./src/globals.css"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-slot": "^1.2.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.3",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}
+```
+
+```typescript
+// packages/ui/src/utils/cn.ts
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+```typescript
+// packages/ui/tailwind.config.ts
+import type { Config } from "tailwindcss";
+
+export default {
+  darkMode: ["class"],
+  content: ["./src/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config;
+```
+
+### 3.3 Database Package
+
+```bash
+mkdir -p packages/db/src/queries
+```
+
+```json
+// packages/db/package.json
+{
+  "name": "@my-saas/db",
+  "private": true,
+  "exports": {
+    "./client": "./src/client.ts",
+    "./schema": "./src/schema.ts",
+    "./queries": "./src/queries/index.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.0",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.8"
+  }
+}
+```
+
+```typescript
+// packages/db/src/client.ts
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "./schema";
+
+const client = postgres(process.env.DATABASE_URL!);
+export const db = drizzle(client, { schema });
+export type Database = typeof db;
+```
+
+```typescript
+// packages/db/src/schema.ts
+import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
+
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull().unique(),
+  name: text("name"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const teams = pgTable("teams", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+```
+
+---
+
+## Phase 4: Dashboard App (Next.js)
+
+```bash
+cd apps/dashboard
+bunx create-next-app@latest . --typescript --tailwind --app --src-dir
+```
+
+```json
+// apps/dashboard/package.json
+{
+  "name": "@my-saas/dashboard",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001 --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@my-saas/ui": "workspace:*",
+    "@my-saas/utils": "workspace:*",
+    "@tanstack/react-query": "^5.90.16",
+    "@trpc/client": "^11.8.1",
+    "@trpc/tanstack-react-query": "^11.8.1",
+    "next": "16.1.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "zod": "^4.1.13",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@my-saas/tsconfig": "workspace:*",
+    "@types/react": "19.2.7",
+    "typescript": "^5.9.3"
+  }
+}
+```
+
+```typescript
+// apps/dashboard/tailwind.config.ts
+import baseConfig from "@my-saas/ui/tailwind.config";
+import type { Config } from "tailwindcss";
+
+export default {
+  content: [
+    "./src/**/*.{ts,tsx}",
+    "../../packages/ui/src/**/*.{ts,tsx}",
+  ],
+  presets: [baseConfig],
+} satisfies Config;
+```
+
+```json
+// apps/dashboard/tsconfig.json
+{
+  "extends": "@my-saas/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+```
+
+---
+
+## Phase 5: API App (Hono + tRPC)
+
+```bash
+mkdir -p apps/api/src/{trpc/routers,rest,utils}
+```
+
+```json
+// apps/api/package.json
+{
+  "name": "@my-saas/api",
+  "scripts": {
+    "dev": "PORT=3003 bun run --hot src/index.ts",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./trpc/routers/_app": "./src/trpc/routers/_app.ts"
+  },
+  "dependencies": {
+    "@hono/trpc-server": "^0.4.1",
+    "@hono/zod-openapi": "^1.1.5",
+    "@my-saas/db": "workspace:*",
+    "@trpc/server": "^11.8.1",
+    "hono": "4.11.4",
+    "superjson": "^2.2.6",
+    "zod": "^4.1.13"
+  }
+}
+```
+
+```typescript
+// apps/api/src/index.ts
+import { trpcServer } from "@hono/trpc-server";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { cors } from "hono/cors";
+import { createTRPCContext } from "./trpc/init";
+import { appRouter } from "./trpc/routers/_app";
+
+const app = new OpenAPIHono();
+
+app.use("*", cors({ origin: "*" }));
+
+app.use("/trpc/*", trpcServer({
+  router: appRouter,
+  createContext: createTRPCContext,
+}));
+
+app.get("/health", (c) => c.json({ status: "ok" }));
+
+export default {
+  port: process.env.PORT ?? 3003,
+  fetch: app.fetch,
+};
+```
+
+```typescript
+// apps/api/src/trpc/init.ts
+import { db } from "@my-saas/db/client";
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
+
+type Context = { db: typeof db };
+
+export const createTRPCContext = async (): Promise<Context> => ({ db });
+
+const t = initTRPC.context<Context>().create({ transformer: superjson });
+
+export const createTRPCRouter = t.router;
+export const publicProcedure = t.procedure;
+```
+
+```typescript
+// apps/api/src/trpc/routers/_app.ts
+import { createTRPCRouter } from "../init";
+import { usersRouter } from "./users";
+
+export const appRouter = createTRPCRouter({
+  users: usersRouter,
+});
+
+export type AppRouter = typeof appRouter;
+```
+
+---
+
+## Phase 6: Development Workflow
+
+### 6.1 Install Dependencies
+
+```bash
+bun install
+```
+
+### 6.2 Run Development
+
+```bash
+# All apps
+bun run dev
+
+# Specific app
+bun run dev:dashboard
+bun run dev:api
+```
+
+### 6.3 Add New Package
+
+```bash
+# Create package
+mkdir -p packages/my-package/src
+
+# Create package.json
+echo '{
+  "name": "@my-saas/my-package",
+  "private": true,
+  "exports": { ".": "./src/index.ts" }
+}' > packages/my-package/package.json
+
+# Add to consuming app
+cd apps/dashboard
+bun add @my-saas/my-package
+```
+
+---
+
+## Final Directory Structure
+
+```
+my-saas/
+├── apps/
+│   ├── api/
+│   │   ├── src/
+│   │   │   ├── trpc/
+│   │   │   │   ├── init.ts
+│   │   │   │   └── routers/
+│   │   │   │       ├── _app.ts
+│   │   │   │       └── users.ts
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   ├── dashboard/
+│   │   ├── src/
+│   │   │   ├── app/
+│   │   │   ├── components/
+│   │   │   └── trpc/
+│   │   ├── next.config.ts
+│   │   ├── tailwind.config.ts
+│   │   └── package.json
+│   │
+│   └── website/
+│       └── (similar to dashboard)
+│
+├── packages/
+│   ├── db/
+│   │   ├── src/
+│   │   │   ├── client.ts
+│   │   │   ├── schema.ts
+│   │   │   └── queries/
+│   │   ├── drizzle.config.ts
+│   │   └── package.json
+│   │
+│   ├── ui/
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   └── globals.css
+│   │   ├── tailwind.config.ts
+│   │   └── package.json
+│   │
+│   ├── utils/
+│   │   ├── src/
+│   │   └── package.json
+│   │
+│   └── tsconfig/
+│       ├── base.json
+│       ├── nextjs.json
+│       └── package.json
+│
+├── types/
+│   └── global.d.ts
+│
+├── biome.json
+├── bun.lock
+├── package.json
+├── tsconfig.json
+└── turbo.json
+```
+
+---
+
+## Quick Start Commands
+
+```bash
+# Clone and setup
+git clone <repo>
+bun install
+
+# Development
+bun run dev              # All apps
+bun run dev:dashboard    # Dashboard only
+bun run dev:api          # API only
+
+# Quality checks
+bun run lint             # Lint all
+bun run typecheck        # Type check all
+bun run format           # Format all
+
+# Build
+bun run build            # Build all
+turbo build --filter=@my-saas/dashboard  # Specific
+
+# Database
+cd packages/db
+bun run drizzle-kit generate
+bun run drizzle-kit push
+```
+
+---
+
+## Services to Set Up
+
+1. **Supabase** - Database, Auth, Storage
+2. **Vercel** - Dashboard & Website hosting
+3. **Fly.io** - API & Worker hosting
+4. **Cloudflare** - Edge services (optional)
+5. **Upstash** - Redis caching
+6. **Trigger.dev** - Background jobs
+7. **Resend** - Transactional emails
+8. **Sentry** - Error tracking
+
+---
+
+## Congratulations! 
+
+You now have a complete understanding of the Midday architecture and can recreate it for your own projects. The key principles are:
+
+1. **Monorepo with Turborepo** - Fast, cached builds
+2. **Shared packages** - DRY code across apps
+3. **Type-safe API** - tRPC end-to-end
+4. **Modern frontend** - Next.js + React + TailwindCSS
+5. **Edge-first backend** - Hono + Cloudflare Workers
+6. **Reliable jobs** - Trigger.dev + BullMQ
+7. **Multi-cloud deployment** - Best tool for each job
+
+## Credits
+
+This project was built with inspiration and support from:
+
+**Midday**  
+The AI-powered financial OS for modern teams and creators  
+<a href="https://midday.ai" target="_blank" rel="noopener noreferrer">website - midday.ai</a>
+
+**GitHub Repository**  
+<a href="https://github.com/midday-ai/midday" target="_blank" rel="noopener noreferrer">github - github.com/midday-ai/midday</a>
+
+**Founders** 
+- Pontus (Pontus Abrahamsson) — <a href="https://x.com/pontusab" target="_blank" rel="noopener noreferrer">@pontusab</a>
+- Viktor (Viktor) — <a href="https://x.com/viktorodman" target="_blank" rel="noopener noreferrer">@viktorodman</a>
+
+Huge thanks to Pontus and Viktor for creating such a powerful tool. It continues to inspire how we think about automation, finance, and developer experience.
+
+Made with 🖤 and a lot of ⌘ + K moments.

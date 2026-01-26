@@ -99,12 +99,34 @@
   }
 }
 
-h3 code {
-  @apply !text-lg md:!text-xl;
+/* Prose code block styling - darker theme for both light and dark mode */
+.prose pre {
+  @apply leading-relaxed font-mono rounded-lg border border-zinc-800 overflow-x-auto;
+  background-color: rgb(9, 9, 11) !important; /* zinc-950 - darker */
 }
 
+.prose code {
+  @apply m-0 px-2 py-1 border rounded-md text-[13px] font-mono text-zinc-100;
+  background-color: rgb(9, 9, 11) !important; /* zinc-950 - darker */
+}
+
+.prose code::before,
+.prose code::after {
+  content: none !important;
+}
+
+/* Pre code blocks - darker theme */
 pre {
-  @apply !px-0 rounded-lg overflow-x-auto py-4;
+  @apply rounded-lg overflow-x-auto text-zinc-100 border border-zinc-800;
+  background-color: rgb(9, 9, 11) !important; /* zinc-950 - darker */
+}
+
+pre code {
+  background-color: transparent !important;
+  border: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin: 0 !important;
 }
 
 pre [data-line] {
@@ -112,17 +134,18 @@ pre [data-line] {
 }
 
 code {
-  @apply text-sm md:text-base !leading-loose;
+  @apply text-sm md:text-base leading-relaxed;
 }
 
 pre > code {
-  counter-reset: line;
+  counter-reset: none;
 }
 
+/* Shiki syntax highlighting */
 code[data-theme*=" "],
 code[data-theme*=" "] span {
-  color: var(--shiki-light);
-  background-color: var(--shiki-light-bg);
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -133,36 +156,23 @@ code[data-theme*=" "] span {
   }
 }
 
+/* Line numbers disabled - clean code blocks */
 code[data-line-numbers] {
-  counter-reset: line;
+  counter-reset: none;
 }
 
 code[data-line-numbers] > [data-line]::before {
-  counter-increment: line;
-  content: counter(line);
-  @apply inline-block w-4 mr-4 text-right text-gray-500;
-}
-
-code {
-  counter-reset: line;
+  content: none !important;
 }
 
 code > [data-line]::before {
-  counter-increment: line;
-  content: counter(line);
-
-  /* Other styling */
-  display: inline-block;
-  width: 1rem;
-  margin-right: 2rem;
-  text-align: right;
-  color: gray;
+  content: none !important;
 }
 
 code[data-line-numbers-max-digits="2"] > [data-line]::before {
-  width: 2rem;
+  content: none !important;
 }
 
 code[data-line-numbers-max-digits="3"] > [data-line]::before {
-  width: 3rem;
+  content: none !important;
 }

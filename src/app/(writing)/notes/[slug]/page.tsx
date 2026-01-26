@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { IconCalendar } from "@tabler/icons-react";
 import { SocialsShowcase } from "@/components/sections/socials-showcase";
+import { CodeBlockEnhancer } from "@/components/code-block-enhancer";
 
 export async function generateStaticParams() {
   const posts = await getAllWritings();
@@ -177,6 +178,9 @@ export default async function Note(
         className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-museo prose-headings:tracking-tight prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-code:text-sm prose-pre:border prose-pre:border-border"
         dangerouslySetInnerHTML={{ __html: post.source }}
       ></article>
+      
+      {/* Enhance code blocks with copy functionality */}
+      <CodeBlockEnhancer />
 
       {/* Author signature */}
       <div className="mt-16 pt-8 border-t border-border">
